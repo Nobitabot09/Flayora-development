@@ -881,6 +881,110 @@
   }
 
 
+
+  /* Smooth, crisp storefront polish */
+  html { scroll-behavior: smooth; }
+  body, #flayora-root {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  #flayora-root * { -webkit-tap-highlight-color: transparent; }
+  #flayora-root button,
+  #flayora-root a,
+  #flayora-root input,
+  #flayora-root select,
+  #flayora-root textarea {
+    touch-action: manipulation;
+  }
+  #flayora-root button,
+  #flayora-root a {
+    transition:
+      color .22s ease,
+      background-color .22s ease,
+      border-color .22s ease,
+      box-shadow .24s ease,
+      transform .24s cubic-bezier(.2,.75,.25,1),
+      opacity .22s ease;
+  }
+  #flayora-root .fl-grid {
+    align-items: stretch;
+    gap: clamp(14px, 2vw, 22px);
+  }
+  #flayora-root .fl-card {
+    border-radius: 12px;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    transition: transform .28s cubic-bezier(.2,.75,.25,1),
+                box-shadow .28s ease,
+                border-color .22s ease;
+  }
+  #flayora-root .fl-card:active { transform: scale(.985); }
+  #flayora-root .fl-card-top { overflow: hidden; }
+  #flayora-root .fl-photo {
+    display: block;
+    image-rendering: auto;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    transition: transform .45s cubic-bezier(.2,.75,.25,1);
+  }
+  #flayora-root .fl-tab,
+  #flayora-root .fl-section-btn,
+  #flayora-root .fl-enquire,
+  #flayora-root .fl-filter-trigger {
+    transition: transform .22s cubic-bezier(.2,.75,.25,1),
+                background-color .22s ease,
+                color .22s ease,
+                box-shadow .22s ease,
+                border-color .22s ease;
+  }
+  #flayora-root .fl-category-tabs {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+  #flayora-root .fl-hero-track {
+    transition: transform .68s cubic-bezier(.22,.75,.2,1);
+  }
+  #flayora-root img {
+    image-rendering: auto;
+    -webkit-user-drag: none;
+  }
+  #flayora-root .fl-header {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+  @media (hover:hover) and (pointer:fine) {
+    #flayora-root .fl-card:hover {
+      transform: translateY(-5px) translateZ(0);
+      border-color: rgba(139,124,255,.28);
+      box-shadow: 0 16px 34px rgba(26,35,68,.12);
+    }
+    #flayora-root .fl-card:hover .fl-photo { transform: scale(1.035) translateZ(0); }
+    #flayora-root .fl-enquire:hover,
+    #flayora-root .fl-section-btn:hover,
+    #flayora-root .fl-filter-trigger:hover { transform: translateY(-2px); }
+  }
+  @media (max-width:700px) {
+    #flayora-root .fl-grid { gap: 12px; padding: 18px 14px; }
+    #flayora-root .fl-card { border-radius: 10px; }
+    #flayora-root .fl-header {
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+  @media (prefers-reduced-motion:reduce) {
+    html { scroll-behavior: auto; }
+    #flayora-root *,
+    #flayora-root *::before,
+    #flayora-root *::after {
+      scroll-behavior: auto !important;
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+    }
+  }
+
 </style>
 </head>
 <body>
