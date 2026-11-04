@@ -1132,7 +1132,7 @@
     products: [], view: "shop", activeSection: "", activeCategory: "All",
     teamUnlocked: false, showProductModal: false, editingCode: null, pinError: "", productModalError: "",
     analytics: { visits: 0, enquiries: [] }, teamTab: "overview", pendingIcon: "gift",
-    imageCache: {}, stockSearch: "", stockStatusFilter: "all", selectedCodes: [],
+    imageCache: {}, heroSlides: [], stockSearch: "", stockStatusFilter: "all", selectedCodes: [],
     shopFilters: { budget: "any", minPrice: "", maxPrice: "", availability: false, newArrivals: false, sort: "default", color: "any", occasion: "any", personalized: false, bulk: false },
     shopFilterDraft: null, showFilterDrawer: false,
     lastSyncedAt: null, duplicateSource: null, viewingProduct: null, detailImageIndex: 0
@@ -1382,7 +1382,7 @@
   }
 
   function goToHeroSlide(i) {
-    heroIndex = (i + HERO_SLIDES.length) % HERO_SLIDES.length;
+    heroIndex = (i + (state.heroSlides.length || HERO_SLIDES.length)) % HERO_SLIDES.length;
     const track = document.getElementById("fl-hero-track");
     if (track) track.style.transform = `translateX(-${heroIndex * 100}%)`;
     document.querySelectorAll(".fl-hero-dot").forEach((d, idx) => d.classList.toggle("active", idx === heroIndex));
@@ -1547,7 +1547,7 @@
       </div>
       <div class="fl-hero" id="fl-hero">
         <div class="fl-hero-track" id="fl-hero-track" style="transform:translateX(-${heroIndex * 100}%)">
-          ${HERO_SLIDES.map(s => `
+          ${(state.heroSlides.length ? state.heroSlides : HERO_SLIDES).map(s => `
             <div class="fl-hero-slide" style="background:${s.bg}">
               <div class="fl-hero-topbar"></div>
               <div class="fl-hero-content">
@@ -1567,7 +1567,7 @@
         <button class="fl-hero-arrow prev" id="fl-hero-prev" aria-label="Previous">‹</button>
         <button class="fl-hero-arrow next" id="fl-hero-next" aria-label="Next">›</button>
         <div class="fl-hero-dots">
-          ${HERO_SLIDES.map((_, i) => `<button class="fl-hero-dot ${i === heroIndex ? "active" : ""}" data-slide="${i}"></button>`).join("")}
+          ${(state.heroSlides.length ? state.heroSlides : HERO_SLIDES).map((_, i) => `<button class="fl-hero-dot ${i === heroIndex ? "active" : ""}" data-slide="${i}"></button>`).join("")}
         </div>
       </div>
 
@@ -1770,11 +1770,39 @@
           <button class="fl-tab ${state.teamTab === "overview" ? "active" : ""}" data-teamtab="overview">Overview</button>
           <button class="fl-tab ${state.teamTab === "stock" ? "active" : ""}" data-teamtab="stock">Inventory</button>
           <button class="fl-tab ${state.teamTab === "log" ? "active" : ""}" data-teamtab="log">Enquiries</button>
+          <button class="fl-tab ${state.teamTab === "banners" ? "active" : ""}" data-teamtab="banners">Hero banners</button>
         </div>
-        ${state.teamTab === "overview" ? renderTeamOverview() : state.teamTab === "stock" ? stockPanel : logPanel}
+        ${state.teamTab === "overview" ? renderTeamOverview() : state.teamTab === "stock" ? stockPanel : state.teamTab === "banners" ? renderHeroManager() : logPanel}
       </div>
       ${modal}
     `;
+  }
+
+  function renderHeroManager() {
+    const slides = state.heroSlides.length ? state.heroSlides : HERO_SLIDES.map(x => JSON.parse(JSON.stringify(x)));
+    return `
+      <section style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:18px;">
+        <h3 style="font-size:20px;margin-bottom:6px;">Storefront hero banners</h3>
+        <p style="color:#777;font-size:13px;margin-bottom:16px;">Edit the rotating promotions shown above your product catalogue. Changes save to the shared catalogue.</p>
+        ${slides.map((slide,i)=>`
+          <article style="border:1px solid var(--line);border-radius:8px;padding:14px;margin:12px 0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><b>Banner ${i+1}</b><button class="fl-btn secondary" data-hero-remove="${i}" type="button">Remove</button></div>
+            <div class="fl-form-grid">
+              <div><label>Eyebrow</label><input data-hero-field="eyebrow" data-hero-index="${i}" value="${escapeHtml(slide.eyebrow||"")}"/></div>
+              <div><label>Background colour</label><input data-hero-field="bg" data-hero-index="${i}" value="${escapeHtml(slide.bg||"#25304a")}"/></div>
+            </div>
+            <label>Heading line 1</label><input data-hero-field="heading0" data-hero-index="${i}" value="${escapeHtml(slide.headingLines?.[0]?.text||"")}"/>
+            <label>Heading line 2</label><input data-hero-field="heading1" data-hero-index="${i}" value="${escapeHtml(slide.headingLines?.[1]?.text||"")}"/>
+            <label>Bullet points (one per line)</label><textarea rows="3" data-hero-field="bullets" data-hero-index="${i}">${escapeHtml((slide.bullets||[]).join("\n"))}</textarea>
+            <label>Icon</label><select data-hero-field="icon" data-hero-index="${i}">${Object.keys(ICONS).map(k=>`<option value="${k}" ${slide.icon===k?"selected":""}>${escapeHtml(ICON_LABELS[k]||k)}</option>`).join("")}</select>
+          </article>`).join("")}
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+          <button class="fl-btn secondary" id="fl-hero-add" type="button">+ Add banner</button>
+          <button class="fl-btn" id="fl-hero-save" type="button">Save banners</button>
+          <button class="fl-btn secondary" id="fl-hero-reset" type="button">Restore defaults</button>
+        </div>
+        <p style="font-size:11px;color:#888;margin-top:12px;">Tip: keep headings short and use 2–3 bullet points for mobile screens. Banner changes do not affect products or pricing.</p>
+      </section>`;
   }
 
   function renderTeamOverview() {
@@ -1941,6 +1969,26 @@ Color options: White, Black, Red">${defaults ? escapeHtml(defaults.specs || "") 
     const openTeam = document.getElementById("fl-open-team");
     if (openTeam) openTeam.onclick = () => { state.view = "team"; render(); };
 
+    document.querySelectorAll("[data-hero-field]").forEach(el => {
+      el.onchange = () => {
+        const idx = Number(el.dataset.heroIndex), field = el.dataset.heroField;
+        const slides = state.heroSlides;
+        if (!slides[idx]) return;
+        if (field === "heading0" || field === "heading1") {
+          const n = field === "heading0" ? 0 : 1;
+          slides[idx].headingLines = slides[idx].headingLines || [{text:"",accent:false},{text:"",accent:true}];
+          slides[idx].headingLines[n] = {text:el.value,accent:n===1};
+        } else if (field === "bullets") slides[idx].bullets = el.value.split("\n").map(x=>x.trim()).filter(Boolean);
+        else slides[idx][field] = el.value;
+      };
+    });
+    const heroAdd = document.getElementById("fl-hero-add");
+    if (heroAdd) heroAdd.onclick = () => { state.heroSlides.push({icon:"gift",eyebrow:"New promotion",headingLines:[{text:"Your headline",accent:false},{text:"Second line",accent:true}],bullets:["Add a key benefit","Add another detail"],bg:"#2E6F64"}); render(); };
+    document.querySelectorAll("[data-hero-remove]").forEach(btn => btn.onclick = () => { state.heroSlides.splice(Number(btn.dataset.heroRemove),1); render(); });
+    const heroSave = document.getElementById("fl-hero-save");
+    if (heroSave) heroSave.onclick = async () => { await window.storage.set("flayora-hero-slides",JSON.stringify(state.heroSlides)); heroIndex=0; alert("Hero banners saved."); render(); };
+    const heroReset = document.getElementById("fl-hero-reset");
+    if (heroReset) heroReset.onclick = () => { if(confirm("Restore the original five banners?")) { state.heroSlides=HERO_SLIDES.map(x=>JSON.parse(JSON.stringify(x))); render(); } };
     document.querySelectorAll("[data-section]").forEach(btn => {
       btn.onclick = () => { state.activeSection = btn.dataset.section; state.activeCategory = "All"; render(); };
     });
