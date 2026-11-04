@@ -796,6 +796,25 @@
     #flayora-root .fl-filter-drawer {animation:none;transform:translateX(0)}
   }
 
+
+  /* Hotfix: drawer is conditionally rendered only while open, so show it immediately.
+     Avoid conflicting mobile/reduced-motion keyframes hiding the panel. */
+  #flayora-root .fl-filter-overlay {position:fixed!important;inset:0!important;z-index:9998!important;opacity:1!important;animation:none!important;background:rgba(12,18,38,.48)!important;backdrop-filter:blur(3px)}
+  #flayora-root .fl-filter-drawer {
+    position:fixed!important;top:0!important;right:0!important;bottom:0!important;left:auto!important;
+    z-index:9999!important;width:min(50vw,560px)!important;height:100dvh!important;max-height:100dvh!important;
+    transform:none!important;animation:none!important;visibility:visible!important;opacity:1!important;
+    display:flex!important;flex-direction:column!important;overflow:hidden!important;
+    border-radius:22px 0 0 22px!important;
+  }
+  #flayora-root .fl-filter-body {min-height:0!important;overflow-y:auto!important;overscroll-behavior:contain}
+  #flayora-root .fl-filter-head,#flayora-root .fl-filter-foot {flex-shrink:0!important}
+  #flayora-root .fl-header-actions {position:relative;z-index:5}
+  #flayora-root .fl-header-filter {position:relative;z-index:6;cursor:pointer;pointer-events:auto}
+  @media(max-width:700px) {
+    #flayora-root .fl-filter-drawer {width:min(88vw,430px)!important;max-width:88vw!important}
+  }
+
 </style>
 </head>
 <body>
@@ -1669,7 +1688,9 @@ Color options: White, Black, Red">${defaults ? escapeHtml(defaults.specs || "") 
     });
 
     const openFilters = document.getElementById("fl-open-filters");
-    if (openFilters) openFilters.onclick = () => {
+    if (openFilters) openFilters.onclick = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       const f = state.shopFilters || {};
       state.shopFilterDraft = {
         category: state.activeCategory, budget: f.budget || "any",
