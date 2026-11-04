@@ -499,6 +499,159 @@
     .fl-card, .fl-photo, .fl-tab-badge, .fl-tab-badge svg, .fl-filter-trigger, .fl-enquire { transition:none; }
   }
 
+
+  /* FLAYORA CREATIVE STUDIO — visual refresh */
+  #flayora-root {
+    --paper:#f4f5f8; --ink:#11182d; --charcoal:#283047; --line:#e2e6ef;
+    --red:#ff5b55; --mustard:#ffbd59; --sage:#58c5b1; --violet:#8b7cff;
+    background:
+      radial-gradient(ellipse at 8% 8%,rgba(139,124,255,.13),transparent 30%),
+      radial-gradient(ellipse at 92% 22%,rgba(255,91,85,.10),transparent 28%),
+      linear-gradient(180deg,#f8f9fc 0%,#f0f2f8 100%);
+    color:#222a40;
+  }
+  #flayora-root .fl-header {
+    padding:22px clamp(18px,4vw,58px); align-items:center;
+    background:rgba(255,255,255,.82); backdrop-filter:blur(18px);
+    border-bottom:1px solid rgba(220,225,238,.8);
+    box-shadow:0 8px 30px rgba(26,35,68,.045);
+  }
+  #flayora-root .fl-header::after { height:3px; opacity:.9; }
+  #flayora-root .fl-stamp {
+    width:52px;height:52px;border:0;border-radius:17px;transform:rotate(-7deg);
+    box-shadow:0 9px 22px rgba(255,91,85,.24);
+    font-family:'Inter',sans-serif;font-size:15px;font-weight:800;letter-spacing:-1px;
+  }
+  #flayora-root .fl-brand h1 {
+    font-family:'Inter',sans-serif;font-size:clamp(27px,4vw,34px);font-weight:850;
+    letter-spacing:-1.8px;line-height:1;
+  }
+  #flayora-root .fl-brand p {font-size:12px;letter-spacing:.02em;color:#737b91;margin-top:6px}
+  #flayora-root .fl-team-link {
+    border:1px solid #dce1ed;border-radius:999px;background:#fff;padding:10px 17px;
+    font-weight:700;box-shadow:0 4px 14px rgba(22,30,58,.05)
+  }
+  #flayora-root .fl-team-link:hover {background:#11182d;color:white;transform:translateY(-1px)}
+  #flayora-root .fl-hero {
+    margin:26px clamp(14px,3.4vw,48px) 0;border-radius:26px;
+    box-shadow:0 24px 65px rgba(22,28,55,.20);isolation:isolate;
+  }
+  #flayora-root .fl-hero-slide {min-height:290px}
+  #flayora-root .fl-hero-slide::before {
+    content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+    background:
+      radial-gradient(circle at 78% 35%,rgba(255,255,255,.24),transparent 22%),
+      radial-gradient(circle at 88% 110%,rgba(255,255,255,.16),transparent 34%),
+      linear-gradient(110deg,rgba(9,15,36,.28),transparent 70%);
+  }
+  #flayora-root .fl-hero-slide::after {
+    content:"";position:absolute;width:280px;height:280px;right:5%;top:-115px;
+    border:1px solid rgba(255,255,255,.2);border-radius:50%;
+    box-shadow:0 0 0 28px rgba(255,255,255,.045),0 0 0 58px rgba(255,255,255,.035);
+    pointer-events:none;
+  }
+  #flayora-root .fl-hero-topbar {height:5px;background:rgba(255,255,255,.45)}
+  #flayora-root .fl-hero-content {position:relative;z-index:1;padding:44px clamp(24px,6vw,76px) 54px;gap:clamp(24px,5vw,64px)}
+  #flayora-root .fl-hero-visual {
+    flex-basis:150px;width:150px;height:150px;border-radius:34px;
+    background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 20px 45px rgba(0,0,0,.12);
+    backdrop-filter:blur(10px);transform:rotate(-7deg);
+  }
+  #flayora-root .fl-hero-visual svg {width:72px;height:72px;filter:drop-shadow(0 8px 12px rgba(0,0,0,.15))}
+  #flayora-root .fl-hero-eyebrow {letter-spacing:.16em;font-size:11px;font-weight:800}
+  #flayora-root .fl-hero-heading div {font-family:'Inter',sans-serif;font-size:clamp(28px,4.2vw,46px);font-weight:850;letter-spacing:-1.7px;line-height:1.08}
+  #flayora-root .fl-hero-heading div.accent {color:#ffe09a}
+  #flayora-root .fl-hero-bullets {flex-direction:row;flex-wrap:wrap;gap:8px;margin-top:18px}
+  #flayora-root .fl-hero-bullets li {font-size:12px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:7px 12px 7px 24px}
+  #flayora-root .fl-hero-bullets li::before {left:10px;top:13px;width:5px;height:5px;background:#ffe09a}
+  #flayora-root .fl-hero-arrow {width:38px;height:38px;background:rgba(255,255,255,.2);backdrop-filter:blur(8px)}
+  #flayora-root .fl-hero-dots {bottom:17px}
+  #flayora-root .fl-sections {padding:25px clamp(16px,3.5vw,50px) 0;gap:9px}
+  #flayora-root .fl-section-btn {
+    border:1px solid #e0e4ee;border-radius:999px;padding:10px 17px;
+    background:rgba(255,255,255,.78);font-weight:700;box-shadow:0 3px 12px rgba(28,38,70,.035);
+    transition:all .2s ease
+  }
+  #flayora-root .fl-section-btn:hover {transform:translateY(-2px);border-color:#a9a1ff}
+  #flayora-root .fl-section-btn.active {background:#171e38;border-color:#171e38;box-shadow:0 7px 18px rgba(23,30,56,.18)}
+  #flayora-root .fl-shop-tools {padding:26px clamp(16px,3.5vw,50px) 0}
+  #flayora-root .fl-filter-trigger {
+    border:1px solid #dfe3ed;border-radius:12px;background:#fff;color:#222a40;
+    padding:11px 15px;font-weight:750;box-shadow:0 4px 15px rgba(25,34,65,.05);
+    transition:all .2s ease
+  }
+  #flayora-root .fl-filter-trigger:hover {transform:translateY(-2px);box-shadow:0 9px 22px rgba(25,34,65,.1)}
+  #flayora-root .fl-results-count {font-size:12px;font-weight:700;color:#7c8499;letter-spacing:.04em}
+  #flayora-root .fl-tabs {padding:20px clamp(16px,3.5vw,50px) 18px;gap:15px;border-bottom:1px solid #e1e5ee}
+  #flayora-root .fl-tab {min-width:68px;transition:transform .2s ease}
+  #flayora-root .fl-tab:hover {transform:translateY(-3px)}
+  #flayora-root .fl-tab-badge {width:52px;height:52px;border-radius:17px;border:1px solid #e0e4ee;box-shadow:0 5px 15px rgba(24,33,65,.045)}
+  #flayora-root .fl-tab-badge svg {width:23px;height:23px}
+  #flayora-root .fl-tab.active .fl-tab-badge {background:linear-gradient(145deg,#242c50,#11182d);box-shadow:0 8px 20px rgba(20,27,55,.22)}
+  #flayora-root .fl-tab-label {font-size:11px;font-weight:750}
+  #flayora-root .fl-grid {gap:clamp(12px,2vw,22px);padding:28px clamp(14px,3.5vw,50px) 42px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+  #flayora-root .fl-card {
+    border:1px solid rgba(221,226,238,.95);border-radius:18px;background:rgba(255,255,255,.94);
+    box-shadow:0 6px 20px rgba(28,37,69,.055);transition:transform .28s cubic-bezier(.2,.8,.2,1),box-shadow .28s,border-color .28s;
+  }
+  #flayora-root .fl-card:hover {transform:translateY(-7px);border-color:#c8c4ff;box-shadow:0 20px 38px rgba(32,40,77,.13)}
+  #flayora-root .fl-card-top {height:clamp(112px,14vw,165px);background-image:radial-gradient(circle,rgba(255,255,255,.55) 1px,transparent 1.2px);background-size:13px 13px}
+  #flayora-root .fl-photo {transition:transform .55s cubic-bezier(.2,.8,.2,1)}
+  #flayora-root .fl-card:hover .fl-photo {transform:scale(1.07)}
+  #flayora-root .fl-hole {width:11px;height:11px;top:12px;left:12px;background:rgba(255,255,255,.8);border:0;box-shadow:0 1px 5px rgba(0,0,0,.1)}
+  #flayora-root .fl-ribbon {font-size:10px;font-weight:800;letter-spacing:.06em}
+  #flayora-root .fl-body {padding:17px 17px 18px}
+  #flayora-root .fl-code {font-size:10px;font-weight:750;letter-spacing:.12em;text-transform:uppercase;color:#9299aa}
+  #flayora-root .fl-name {font-size:16px;font-weight:800;letter-spacing:-.35px}
+  #flayora-root .fl-desc {font-size:12px;line-height:1.55;color:#798197}
+  #flayora-root .fl-price {font-size:16px;font-weight:850;letter-spacing:-.3px}
+  #flayora-root .fl-enquire {border-radius:10px;padding:11px;background:linear-gradient(110deg,#171e38,#343e68);font-weight:750;transition:all .2s ease}
+  #flayora-root .fl-enquire:hover {background:linear-gradient(110deg,#ff625c,#e64e78);box-shadow:0 7px 17px rgba(255,91,85,.22);transform:translateY(-1px)}
+  #flayora-root .fl-footer {margin-top:24px;border-radius:28px 28px 0 0;background:linear-gradient(130deg,#11182d,#252e53 70%,#39345f)}
+  #flayora-root .fl-footer-inner {padding:42px clamp(20px,4vw,58px) 8px}
+  #flayora-root .fl-footer-about {font-size:14px;max-width:760px;color:rgba(255,255,255,.75)}
+  #flayora-root .fl-footer-label {letter-spacing:.14em;color:#aeb6d2}
+  #flayora-root .fl-footer-bottom {padding:18px clamp(20px,4vw,58px);border-color:rgba(255,255,255,.12)}
+  #flayora-root .fl-detail-modal {border-radius:22px;box-shadow:0 30px 90px rgba(9,15,35,.35)}
+  #flayora-root .fl-detail-gallery {background:linear-gradient(145deg,#f4f5fb,#e9ebf7)}
+  #flayora-root .fl-detail-image-wrap {border-radius:16px;border:0;box-shadow:0 8px 25px rgba(25,33,66,.08)}
+  #flayora-root .fl-modal {border-radius:18px;box-shadow:0 24px 70px rgba(9,15,35,.22)}
+  #flayora-root .fl-btn {border-radius:9px;font-weight:700}
+  @media(max-width:560px) {
+    #flayora-root .fl-header {padding:17px 16px}
+    #flayora-root .fl-stamp {width:44px;height:44px;border-radius:14px}
+    #flayora-root .fl-brand h1 {font-size:27px}
+    #flayora-root .fl-hero {margin:17px 12px 0;border-radius:20px}
+    #flayora-root .fl-hero-slide {min-height:260px}
+    #flayora-root .fl-hero-content {padding:27px 24px 50px;gap:16px;flex-direction:row;align-items:center}
+    #flayora-root .fl-hero-visual {width:78px;height:78px;flex:0 0 78px;border-radius:22px}
+    #flayora-root .fl-hero-visual svg {width:39px;height:39px}
+    #flayora-root .fl-hero-heading div {font-size:clamp(23px,6vw,31px);letter-spacing:-.9px}
+    #flayora-root .fl-hero-eyebrow {font-size:9px;letter-spacing:.11em}
+    #flayora-root .fl-hero-bullets {gap:5px;margin-top:12px}
+    #flayora-root .fl-hero-bullets li {font-size:10px;padding:5px 8px 5px 18px}
+    #flayora-root .fl-hero-bullets li::before {left:7px;top:10px;width:4px;height:4px}
+    #flayora-root .fl-hero-arrow {width:30px;height:30px}
+    #flayora-root .fl-sections {padding:18px 14px 0}
+    #flayora-root .fl-section-btn {padding:9px 13px;font-size:12px}
+    #flayora-root .fl-shop-tools {padding:20px 14px 0}
+    #flayora-root .fl-tabs {padding:17px 14px 15px;gap:12px}
+    #flayora-root .fl-tab-badge {width:46px;height:46px;border-radius:15px}
+    #flayora-root .fl-grid {grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;padding:19px 12px 30px}
+    #flayora-root .fl-card {border-radius:14px}
+    #flayora-root .fl-card-top {height:clamp(90px,27vw,125px)}
+    #flayora-root .fl-body {padding:11px 10px 12px}
+    #flayora-root .fl-name {font-size:13px;line-height:1.3}
+    #flayora-root .fl-desc {font-size:10px;min-height:29px;margin-bottom:8px}
+    #flayora-root .fl-price {font-size:14px;margin-bottom:9px}
+    #flayora-root .fl-enquire {padding:9px 5px;font-size:11px}
+    #flayora-root .fl-footer {border-radius:22px 22px 0 0}
+  }
+  @media(prefers-reduced-motion:reduce) {
+    #flayora-root *,#flayora-root *::before,#flayora-root *::after {scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
+  }
+
 </style>
 </head>
 <body>
