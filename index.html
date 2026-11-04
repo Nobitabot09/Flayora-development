@@ -2120,12 +2120,12 @@ Color options: White, Black, Red">${defaults ? escapeHtml(defaults.specs || "") 
             await window.storage.set(`flayora-hero-image:${i}`,slide.imageDataUrl,true);
             slide.imageUrl=slide.imageDataUrl;
             delete slide.imageDataUrl;
-          } else if (slide.imageUrl) {
-            const existing=await window.storage.get(`flayora-hero-image:${i}`,true);
-            if (existing && existing.value) slide.imageUrl=existing.value;
+          } else if (!slide.imageUrl) {
+            await window.storage.delete(`flayora-hero-image:${i}`,true).catch(()=>{});
           }
         }
-        await window.storage.set("flayora-hero-slides",JSON.stringify(state.heroSlides),true);
+        const slidesToSave=state.heroSlides.map(({imageUrl,imageDataUrl,...slide})=>slide);
+        await window.storage.set("flayora-hero-slides",JSON.stringify(slidesToSave),true);
         heroIndex=0; alert("Hero banners saved."); render();
       } catch(e) { alert("Could not save the hero banners. Please try again."); }
     };
