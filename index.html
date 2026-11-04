@@ -993,7 +993,7 @@
     teamUnlocked: false, showProductModal: false, editingCode: null, pinError: "", productModalError: "",
     analytics: { visits: 0, enquiries: [] }, teamTab: "stock", pendingIcon: "gift",
     imageCache: {}, stockSearch: "", stockStatusFilter: "all", selectedCodes: [],
-    shopFilters: { budget: "any", minPrice: "", maxPrice: "", availability: false, newArrivals: false, sort: "default" },
+    shopFilters: { budget: "any", minPrice: "", maxPrice: "", availability: false, newArrivals: false, sort: "default", color: "any", occasion: "any", personalized: false, bulk: false },
     shopFilterDraft: null, showFilterDrawer: false,
     lastSyncedAt: null, duplicateSource: null, viewingProduct: null, detailImageIndex: 0
   };
@@ -1273,7 +1273,7 @@
     return (state.activeCategory !== "All" ? 1 : 0) +
       (f.budget && f.budget !== "any" ? 1 : 0) +
       (f.availability ? 1 : 0) + (f.newArrivals ? 1 : 0) +
-      (f.sort && f.sort !== "default" ? 1 : 0);
+      (f.sort && f.sort !== "default" ? 1 : 0) + (f.color && f.color !== "any" ? 1 : 0) + (f.occasion && f.occasion !== "any" ? 1 : 0) + (f.personalized ? 1 : 0) + (f.bulk ? 1 : 0);
   }
 
   function renderShop() {
@@ -1300,6 +1300,10 @@
     if (max !== "" && max !== Infinity) visible = visible.filter(p => Number(p.price) > 0 && Number(p.price) <= max);
     if (filters.availability) visible = visible.filter(productIsOrderable);
     if (filters.newArrivals) visible = visible.filter(isNewArrival);
+    if (filters.color && filters.color !== "any") visible = visible.filter(p => Array.isArray(p.colors) && p.colors.some(c => String(c).toLowerCase() === filters.color));
+    if (filters.occasion && filters.occasion !== "any") visible = visible.filter(p => Array.isArray(p.occasions) && p.occasions.some(o => String(o).toLowerCase() === filters.occasion));
+    if (filters.personalized) visible = visible.filter(p => p.personalized === true);
+    if (filters.bulk) visible = visible.filter(p => p.bulkOrder === true);
     if (filters.sort === "low") visible = [...visible].sort((a,b) => (Number(a.price) > 0 ? Number(a.price) : Infinity) - (Number(b.price) > 0 ? Number(b.price) : Infinity));
     if (filters.sort === "high") visible = [...visible].sort((a,b) => (Number(b.price) > 0 ? Number(b.price) : -Infinity) - (Number(a.price) > 0 ? Number(a.price) : -Infinity));
 
@@ -1340,7 +1344,7 @@
         </div>`;
     }).join("");
 
-    const draft = state.shopFilterDraft || { category: state.activeCategory, budget: filters.budget || "any", minPrice: filters.minPrice || "", maxPrice: filters.maxPrice || "", availability: !!filters.availability, newArrivals: !!filters.newArrivals, sort: filters.sort || "default" };
+    const draft = state.shopFilterDraft || { category: state.activeCategory, budget: filters.budget || "any", minPrice: filters.minPrice || "", maxPrice: filters.maxPrice || "", availability: !!filters.availability, newArrivals: !!filters.newArrivals, sort: filters.sort || "default", color: filters.color || "any", occasion: filters.occasion || "any", personalized: !!filters.personalized, bulk: !!filters.bulk };
     const drawer = state.showFilterDrawer ? `
       <div class="fl-filter-overlay" id="fl-filter-overlay"></div>
       <aside class="fl-filter-drawer" role="dialog" aria-modal="true" aria-labelledby="fl-filter-title">
@@ -1364,7 +1368,15 @@
           <div class="fl-filter-group"><label class="fl-filter-label">Availability & discovery</label>
             <label class="fl-filter-check"><input type="checkbox" id="fl-filter-available" ${draft.availability ? "checked" : ""}> Show orderable products only</label>
             <label class="fl-filter-check"><input type="checkbox" id="fl-filter-new" ${draft.newArrivals ? "checked" : ""}> New arrivals (added in the last 30 days)</label>
+            <label class="fl-filter-check"><input type="checkbox" id="fl-filter-personalized" ${draft.personalized ? "checked" : ""}> Personalised products</label>
+            <label class="fl-filter-check"><input type="checkbox" id="fl-filter-bulk" ${draft.bulk ? "checked" : ""}> Suitable for bulk orders</label>
           </div>
+          <div class="fl-filter-group"><label class="fl-filter-label" for="fl-filter-color">Colour</label><select class="fl-filter-control" id="fl-filter-color">
+            ${[["any","Any colour"],["black","Black"],["white","White"],["red","Red"],["blue","Blue"],["green","Green"],["yellow","Yellow"],["pink","Pink"],["multicolour","Multicolour"]].map(([v,l]) => `<option value="${v}" ${draft.color === v ? "selected" : ""}>${l}</option>`).join("")}
+          </select></div>
+          <div class="fl-filter-group"><label class="fl-filter-label" for="fl-filter-occasion">Occasion</label><select class="fl-filter-control" id="fl-filter-occasion">
+            ${[["any","Any occasion"],["birthday","Birthday"],["wedding","Wedding"],["anniversary","Anniversary"],["festival","Festival"],["corporate","Corporate"],["teacher","Teacher appreciation"],["everyday","Everyday"]].map(([v,l]) => `<option value="${v}" ${draft.occasion === v ? "selected" : ""}>${l}</option>`).join("")}
+          </select></div>
           <div class="fl-filter-group"><label class="fl-filter-label" for="fl-filter-sort">Price sorting</label>
             <select class="fl-filter-control" id="fl-filter-sort">
               <option value="default" ${draft.sort === "default" ? "selected" : ""}>Recommended order</option>
@@ -1688,6 +1700,14 @@
           <datalist id="pf-cat-list">${cats.map(c => `<option value="${escapeHtml(c)}">`).join("")}</datalist>
           <label>Description</label>
           <textarea id="pf-desc" rows="2">${defaults ? escapeHtml(defaults.desc || "") : ""}</textarea>
+          <div class="fl-form-grid">
+            <div><label>Colours (comma separated)</label><input id="pf-colors" value="${defaults && Array.isArray(defaults.colors) ? escapeHtml(defaults.colors.join(", ")) : ""}" placeholder="Black, White, Red"/></div>
+            <div><label>Occasions (comma separated)</label><input id="pf-occasions" value="${defaults && Array.isArray(defaults.occasions) ? escapeHtml(defaults.occasions.join(", ")) : ""}" placeholder="Birthday, Wedding"/></div>
+          </div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;margin:4px 0 12px;">
+            <label style="display:flex;align-items:center;gap:6px;"><input id="pf-personalized" type="checkbox" style="width:auto;margin:0;" ${defaults && defaults.personalized ? "checked" : ""}/> Personalisation available</label>
+            <label style="display:flex;align-items:center;gap:6px;"><input id="pf-bulk" type="checkbox" style="width:auto;margin:0;" ${defaults && defaults.bulkOrder ? "checked" : ""}/> Bulk orders accepted</label>
+          </div>
           <label>Specifications (one per line, e.g. "Material: Ceramic")</label>
           <textarea id="pf-specs" rows="3" placeholder="Material: Ceramic
 Size: 325ml
@@ -1758,9 +1778,8 @@ Color options: White, Black, Red">${defaults ? escapeHtml(defaults.specs || "") 
       event.stopPropagation();
       const f = state.shopFilters || {};
       state.shopFilterDraft = {
-        category: state.activeCategory, budget: f.budget || "any",
-        minPrice: f.minPrice || "", maxPrice: f.maxPrice || "",
-        availability: !!f.availability, newArrivals: !!f.newArrivals, sort: f.sort || "default"
+        category: state.activeCategory, budget: f.budget || "any", minPrice: f.minPrice || "", maxPrice: f.maxPrice || "",
+        availability: !!f.availability, newArrivals: !!f.newArrivals, sort: f.sort || "default", color: f.color || "any", occasion: f.occasion || "any", personalized: !!f.personalized, bulk: !!f.bulk
       };
       state.showFilterDrawer = true;
       render();
@@ -1790,10 +1809,18 @@ Color options: White, Black, Red">${defaults ? escapeHtml(defaults.specs || "") 
     if (newFilter && filterDraft) newFilter.onchange = () => { filterDraft.newArrivals = newFilter.checked; };
     const sortFilter = document.getElementById("fl-filter-sort");
     if (sortFilter && filterDraft) sortFilter.onchange = () => { filterDraft.sort = sortFilter.value; };
+    const colorFilter = document.getElementById("fl-filter-color");
+    if (colorFilter && filterDraft) colorFilter.onchange = () => { filterDraft.color = colorFilter.value; };
+    const occasionFilter = document.getElementById("fl-filter-occasion");
+    if (occasionFilter && filterDraft) occasionFilter.onchange = () => { filterDraft.occasion = occasionFilter.value; };
+    const personalizedFilter = document.getElementById("fl-filter-personalized");
+    if (personalizedFilter && filterDraft) personalizedFilter.onchange = () => { filterDraft.personalized = personalizedFilter.checked; };
+    const bulkFilter = document.getElementById("fl-filter-bulk");
+    if (bulkFilter && filterDraft) bulkFilter.onchange = () => { filterDraft.bulk = bulkFilter.checked; };
     const resetFilters = document.getElementById("fl-filter-reset");
     if (resetFilters) resetFilters.onclick = () => {
       state.activeCategory = "All";
-      state.shopFilters = { budget: "any", minPrice: "", maxPrice: "", availability: false, newArrivals: false, sort: "default" };
+      state.shopFilters = { budget: "any", minPrice: "", maxPrice: "", availability: false, newArrivals: false, sort: "default", color: "any", occasion: "any", personalized: false, bulk: false };
       state.showFilterDrawer = false; state.shopFilterDraft = null; render();
     };
     const applyFilters = document.getElementById("fl-filter-apply");
@@ -1806,7 +1833,7 @@ Color options: White, Black, Red">${defaults ? escapeHtml(defaults.specs || "") 
       state.activeCategory = d.category || "All";
       state.shopFilters = {
         budget: d.budget || "any", minPrice: d.minPrice || "", maxPrice: d.maxPrice || "",
-        availability: !!d.availability, newArrivals: !!d.newArrivals, sort: d.sort || "default"
+        availability: !!d.availability, newArrivals: !!d.newArrivals, sort: d.sort || "default", color: d.color || "any", occasion: d.occasion || "any", personalized: !!d.personalized, bulk: !!d.bulk
       };
       state.showFilterDrawer = false; state.shopFilterDraft = null; render();
     };
@@ -2070,6 +2097,10 @@ Color options: White, Black, Red">${defaults ? escapeHtml(defaults.specs || "") 
       const specs = document.getElementById("pf-specs").value.trim();
       const image = document.getElementById("pf-image").value.trim();
       const stockType = document.getElementById("pf-stocktype").value;
+      const colors = document.getElementById("pf-colors").value.split(",").map(v => v.trim()).filter(Boolean);
+      const occasions = document.getElementById("pf-occasions").value.split(",").map(v => v.trim()).filter(Boolean);
+      const personalized = document.getElementById("pf-personalized").checked;
+      const bulkOrder = document.getElementById("pf-bulk").checked;
 
       if (!code || !name || !section || !category) {
         state.productModalError = "Please fill in code, name, section and category.";
@@ -2098,9 +2129,9 @@ Color options: White, Black, Red">${defaults ? escapeHtml(defaults.specs || "") 
       });
       if (state.editingCode) {
         const p = state.products.find(p => p.code === state.editingCode);
-        Object.assign(p, { name, section, category, price, desc, specs, image, stockType, icon: state.pendingIcon });
+        Object.assign(p, { name, section, category, price, desc, specs, image, stockType, icon: state.pendingIcon, colors, occasions, personalized, bulkOrder });
       } else {
-        state.products.push({ code, name, section, category, price, desc, specs, image, stockType, icon: state.pendingIcon, status: "available", reservedBy: "", reservedAt: "", needsRestock: false, createdAt: new Date().toISOString() });
+        state.products.push({ code, name, section, category, price, desc, specs, image, stockType, icon: state.pendingIcon, colors, occasions, personalized, bulkOrder, status: "available", reservedBy: "", reservedAt: "", needsRestock: false, createdAt: new Date().toISOString() });
       }
       await saveCatalog();
       if (photoFailed) {
