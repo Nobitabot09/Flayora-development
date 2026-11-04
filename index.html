@@ -1799,7 +1799,7 @@ Color options: White, Black, Red">${defaults ? escapeHtml(defaults.specs || "") 
         const el = document.getElementById(id);
         return el && el.value.trim() ? label + ": " + el.value.trim() : "";
       }).filter(Boolean);
-      const message = "Hi Flayora! I'd like a bulk quotation.\\n\\n" + lines.join("\\n");
+      const message = "Hi Flayora! I'd like a bulk quotation.\n\n" + lines.join("\n");
       window.open("https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(message), "_blank", "noopener");
     };
     const heroEl = document.getElementById("fl-hero");
