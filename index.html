@@ -479,6 +479,13 @@
   @keyframes fl-drawer-in { to { transform:translateX(0); } }
   @keyframes fl-card-enter { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
   @media (max-width:560px) {
+    .fl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 20px 14px; }
+    .fl-card-top { height: 96px; }
+    .fl-body { padding: 10px 10px 12px; }
+    .fl-name { font-size: 14px; }
+    .fl-desc { font-size: 11px; min-height: 30px; }
+    .fl-price { font-size: 14px; margin-bottom: 10px; }
+    .fl-enquire { padding: 9px 6px; font-size: 12px; }
     .fl-shop-tools { padding:15px 16px 0; }
     .fl-filter-trigger { padding:10px 14px; }
     .fl-results-count { font-size:11px; }
