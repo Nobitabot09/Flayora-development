@@ -1115,6 +1115,48 @@
   .fl-hero-slide { background-size:cover; background-position:center; }
   .fl-hero-heading div { text-shadow:0 2px 8px rgba(0,0,0,.4); }
 
+
+  /* Oversized pastel-glass category tiles with a horizontal swipe rail */
+  #flayora-root .fl-category-tabs {
+    display:flex; flex-wrap:nowrap; align-items:flex-start; gap:22px;
+    overflow-x:auto; overflow-y:visible; padding:20px 24px 18px;
+    scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
+  }
+  #flayora-root .fl-category-tabs .fl-tab {
+    flex:0 0 84px; min-width:84px; gap:9px; scroll-snap-align:start;
+  }
+  #flayora-root .fl-category-tabs .fl-tab-badge {
+    width:84px; height:84px; border-radius:25px; border:2px solid rgba(255,255,255,.92);
+    background:
+      radial-gradient(circle at 18% 18%,rgba(255,255,255,.95) 0 12%,transparent 34%),
+      linear-gradient(140deg,#c9e9f7 0%,#e7dafa 48%,#ffe0d8 100%);
+    box-shadow:0 9px 18px rgba(77,83,125,.13),inset 0 2px 5px rgba(255,255,255,.95),inset 0 -5px 10px rgba(117,107,157,.08);
+    transition:transform .28s cubic-bezier(.2,.8,.2,1),box-shadow .28s ease;
+  }
+  #flayora-root .fl-category-tabs .fl-tab:nth-child(3n+2) .fl-tab-badge {
+    background:radial-gradient(circle at 18% 18%,rgba(255,255,255,.95) 0 12%,transparent 34%),linear-gradient(140deg,#cdeaf5,#f3d8e9 58%,#ffe6d5);
+  }
+  #flayora-root .fl-category-tabs .fl-tab:nth-child(3n) .fl-tab-badge {
+    background:radial-gradient(circle at 18% 18%,rgba(255,255,255,.95) 0 12%,transparent 34%),linear-gradient(140deg,#d9e9d8,#e5e0f5 58%,#f8e5d4);
+  }
+  #flayora-root .fl-category-tabs .fl-tab-badge svg {
+    width:46px; height:46px; stroke-width:1.7;
+    filter:drop-shadow(0 3px 2px rgba(39,49,78,.18));
+  }
+  #flayora-root .fl-category-tabs .fl-tab.active .fl-tab-badge {
+    border-color:#fff; background:linear-gradient(140deg,#c8e8f5,#eadcf6 52%,#ffdfd5);
+    box-shadow:0 11px 22px rgba(99,91,158,.22),inset 0 2px 6px rgba(255,255,255,.98);
+    transform:translateY(-3px) scale(1.035);
+  }
+  #flayora-root .fl-category-tabs .fl-tab.active .fl-tab-label { color:var(--ink); }
+  #flayora-root .fl-category-tabs .fl-tab-label { font-size:12px; font-weight:650; white-space:nowrap; }
+  @media(max-width:560px) {
+    #flayora-root .fl-category-tabs { gap:18px; padding-left:20px; padding-right:20px; }
+    #flayora-root .fl-category-tabs .fl-tab { flex-basis:78px; min-width:78px; }
+    #flayora-root .fl-category-tabs .fl-tab-badge { width:78px; height:78px; border-radius:23px; }
+    #flayora-root .fl-category-tabs .fl-tab-badge svg { width:43px; height:43px; }
+  }
+
 </style>
   <link rel="stylesheet" href="/ai/ai-widget.css">
 </head>
@@ -1325,6 +1367,12 @@
           state.imageCache[code][idx] = imageValue;
         } catch (e) {}
       }));
+      // If a second image exists, it is the original uploaded product photo.
+      // Keep that as the storefront lead image instead of the decorative placeholder.
+      Object.keys(state.imageCache).forEach(code => {
+        const gallery = state.imageCache[code] || [];
+        if (gallery[1]) state.imageCache[code] = [gallery[1], ...gallery.slice(2)].filter(Boolean);
+      });
     } catch (e) { /* no images yet */ }
   }
 
