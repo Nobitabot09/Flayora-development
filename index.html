@@ -2702,7 +2702,7 @@ Color options: White, Black, Red">${defaults ? escapeHtml(defaults.specs || "") 
     };
   }
   function escapeText(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-  function labelProductButtons(){document.querySelectorAll("#flayora-root .fl-card .fl-enquire").forEach(button=>{button.textContent="Order Now";});}
+  function labelProductButtons(){document.querySelectorAll("#flayora-root .fl-card .fl-enquire").forEach(button=>{if(button.textContent!=="Order Now")button.textContent="Order Now";});}
   const observer=new MutationObserver(()=>{addHeaderButton();enhanceDetail();labelProductButtons();});
   observer.observe(document.getElementById("flayora-root")||document.body,{childList:true,subtree:true});
   addHeaderButton();enhanceDetail();
