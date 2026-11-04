@@ -1224,7 +1224,9 @@
             idx = parseInt(rest.slice(lastColon + 1), 10);
           }
           if (!state.imageCache[code]) state.imageCache[code] = [];
-          state.imageCache[code][idx] = r.value;
+          let imageValue = r.value;
+          try { const decoded = JSON.parse(imageValue); if (typeof decoded === "string" && decoded.startsWith("data:image/")) imageValue = decoded; } catch (e) {}
+          state.imageCache[code][idx] = imageValue;
         } catch (e) {}
       }));
     } catch (e) { /* no images yet */ }
@@ -1383,7 +1385,8 @@
   }
 
   function goToHeroSlide(i) {
-    heroIndex = (i + (state.heroSlides.length || HERO_SLIDES.length)) % HERO_SLIDES.length;
+    const slideCount = (state.heroSlides.length || HERO_SLIDES.length);
+    heroIndex = (i + slideCount) % slideCount;
     const track = document.getElementById("fl-hero-track");
     if (track) track.style.transform = `translateX(-${heroIndex * 100}%)`;
     document.querySelectorAll(".fl-hero-dot").forEach((d, idx) => d.classList.toggle("active", idx === heroIndex));
