@@ -1019,6 +1019,91 @@
     }
   }
 
+
+  /* Follow the visitor's device appearance preference automatically. */
+  @media (prefers-color-scheme: dark) {
+    #flayora-root {
+      color-scheme: dark;
+      --paper: #151923;
+      --ink: #eef1fa;
+      --charcoal: #d9deea;
+      --line: #343b4b;
+      background:
+        radial-gradient(circle, rgba(220,228,245,0.045) 1.2px, transparent 1.3px) 0 0/22px 22px,
+        radial-gradient(ellipse at top, #202637 0%, #171d2a 48%, #111620 100%);
+      color: var(--charcoal);
+    }
+    #flayora-root .fl-header { background-color: rgba(20,25,36,.82); }
+    #flayora-root .fl-brand p,
+    #flayora-root .fl-tab-label,
+    #flayora-root .fl-desc,
+    #flayora-root .fl-overview-head p,
+    #flayora-root .fl-overview-card span,
+    #flayora-root .fl-overview-action small,
+    #flayora-root .fl-overview-activity small,
+    #flayora-root .fl-modal label,
+    #flayora-root .fl-restock-label { color: #aeb7c9; }
+    #flayora-root .fl-team-link { border-color: #cbd3e3; color: #e8edf8; }
+    #flayora-root .fl-team-link:hover { background: #e8edf8; color: #171d2a; }
+    #flayora-root .fl-section-btn,
+    #flayora-root .fl-tab-badge,
+    #flayora-root .fl-card,
+    #flayora-root .fl-overview-card,
+    #flayora-root .fl-overview-panel,
+    #flayora-root .fl-modal,
+    #flayora-root .fl-detail-modal,
+    #flayora-root .fl-icon-opt {
+      background-color: #202838;
+      color: #e6ebf5;
+      border-color: #3a4559;
+    }
+    #flayora-root .fl-section-btn.active,
+    #flayora-root .fl-tab.active .fl-tab-badge,
+    #flayora-root .fl-btn,
+    #flayora-root .fl-enquire { background: #e8edf8; color: #182033; border-color: #e8edf8; }
+    #flayora-root .fl-section-btn.active { color: #182033; }
+    #flayora-root .fl-tab.active .fl-tab-label,
+    #flayora-root .fl-name,
+    #flayora-root .fl-price,
+    #flayora-root .fl-overview-head h3,
+    #flayora-root .fl-overview-card strong,
+    #flayora-root .fl-overview-panel h4,
+    #flayora-root .fl-overview-action,
+    #flayora-root .fl-table th,
+    #flayora-root .fl-detail-modal h2,
+    #flayora-root .fl-detail-modal h3 { color: #eef1fa; }
+    #flayora-root .fl-stock-toolbar input,
+    #flayora-root .fl-stock-toolbar select,
+    #flayora-root .fl-status-select,
+    #flayora-root .fl-name-input,
+    #flayora-root .fl-modal input,
+    #flayora-root .fl-modal select,
+    #flayora-root .fl-modal textarea,
+    #flayora-root input,
+    #flayora-root select,
+    #flayora-root textarea {
+      background-color: #151c29;
+      color: #eef1fa;
+      border-color: #465168;
+    }
+    #flayora-root input::placeholder,
+    #flayora-root textarea::placeholder { color: #8994a9; }
+    #flayora-root .fl-btn.secondary { background: transparent; color: #e6ebf5; border-color: #59657b; }
+    #flayora-root .fl-overview-card.attention { background: #342d20; border-color: #6d5830; }
+    #flayora-root .fl-overview-action-icon { background: #30394b; }
+    #flayora-root .fl-overview-action,
+    #flayora-root .fl-overview-activity { border-color: #354054; }
+    #flayora-root .fl-overview-live { background: #1e3029; border-color: #355746; color: #a9d2b2; }
+    #flayora-root .fl-bulk-bar { background: #382f1e; border-color: #6c5832; color: #f1d69c; }
+    #flayora-root .fl-bulk-bar button { background: #242b38; }
+    #flayora-root .fl-icon-opt.selected { background: #442b31; }
+    #flayora-root .fl-hole { background: #202838; border-color: #7c879a; }
+    #flayora-root .fl-modal-bg { background: rgba(0,0,0,.72); }
+    #flayora-root .fl-empty { color: #aeb7c9; }
+    #flayora-root .fl-table td { border-color: #343b4b; }
+    #flayora-root .fl-enquire.disabled { background: #394254; color: #aeb7c9; }
+  }
+
 </style>
   <link rel="stylesheet" href="/ai/ai-widget.css">
 </head>
