@@ -1259,6 +1259,7 @@
       state.cloudReadError = String(e && (e.message || e) || "Local storage is unavailable");
     }
     state.activeSection = state.products[0] ? state.products[0].section : "";
+    try { const heroRes = await window.storage.get("flayora-hero-slides"); state.heroSlides = heroRes && heroRes.value ? JSON.parse(heroRes.value) : HERO_SLIDES.map(x => JSON.parse(JSON.stringify(x))); } catch(e) { state.heroSlides = HERO_SLIDES.map(x => JSON.parse(JSON.stringify(x))); }
     await loadImages();
     await loadAnalytics();
     state.analytics.visits += 1;
