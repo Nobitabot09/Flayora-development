@@ -1660,7 +1660,7 @@
                   ${s.eyebrow ? `<div class="fl-hero-eyebrow">${escapeHtml(s.eyebrow)}</div>` : ""}
                   <div class="fl-hero-heading"><div>${escapeHtml((s.headingLines||[]).map(l=>l.text).filter(Boolean).join(" ") || s.headline || "")}</div></div>
                   ${s.message || (s.bullets||[]).length ? `<p class="fl-hero-message">${escapeHtml(s.message || (s.bullets||[]).join(" · "))}</p>` : ""}
-                  ${s.buttonText ? `<a class="fl-hero-cta" href="${escapeHtml(s.buttonUrl || '#')}" ${/^https?:\\/\\//i.test(s.buttonUrl||"") ? 'target="_blank" rel="noopener"' : ""}>${escapeHtml(s.buttonText)}</a>` : ""}
+                  ${s.buttonText ? `<a class="fl-hero-cta" href="${escapeHtml(s.buttonUrl || '#')}" ${((s.buttonUrl||"").startsWith("https://") || (s.buttonUrl||"").startsWith("http://")) ? 'target="_blank" rel="noopener"' : ""}>${escapeHtml(s.buttonText)}</a>` : ""}
                 </div>
               </div>
             </div>`).join("")}
