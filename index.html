@@ -880,6 +880,23 @@
     #flayora-root .fl-category-tabs .fl-tab-badge {transition:none!important}
   }
 
+
+  /* Growth funnel */
+  .fl-growth { margin: 24px; padding: 26px; border-radius: 12px; background: linear-gradient(135deg,#1D2438,#303b5b); color:#fff; display:grid; grid-template-columns:1.05fr .95fr; gap:24px; box-shadow:0 12px 28px rgba(29,36,56,.14); }
+  .fl-growth h2 { color:#fff!important; font-size:clamp(24px,3vw,34px); line-height:1.12; margin:8px 0 10px!important; }
+  .fl-growth p { color:rgba(255,255,255,.78); font-size:14px; margin:0 0 14px; }
+  .fl-growth-kicker { color:#E8A93A; font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+  .fl-growth-points { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0; }
+  .fl-growth-points span { border:1px solid rgba(255,255,255,.22); border-radius:99px; padding:6px 10px; font-size:11px; color:#fff; }
+  .fl-growth-form { background:#fff; color:#1D2438; border-radius:9px; padding:18px; display:grid; grid-template-columns:1fr 1fr; gap:10px; align-content:start; }
+  .fl-growth-form label { font-size:11px; font-weight:600; color:#555b6b; display:block; margin-bottom:4px; }
+  .fl-growth-form input,.fl-growth-form select,.fl-growth-form textarea { width:100%; min-width:0; padding:10px; border:1px solid #dedee5; border-radius:5px; background:#fff; color:#1D2438; font:13px Inter,sans-serif; }
+  .fl-growth-form textarea { min-height:68px; resize:vertical; }
+  .fl-growth-field.full { grid-column:1/-1; }
+  .fl-growth-submit { grid-column:1/-1; border:0; border-radius:5px; padding:12px 16px; background:#D64545; color:#fff; font-weight:700; font-size:13px; }
+  .fl-growth-note { grid-column:1/-1; color:#777!important; font-size:10px!important; margin:0!important; }
+  @media(max-width:700px) { .fl-growth { grid-template-columns:1fr; margin:18px 14px; padding:20px; } .fl-growth-form { grid-template-columns:1fr; } .fl-growth-field.full,.fl-growth-submit,.fl-growth-note { grid-column:1; } }
+
 </style>
 </head>
 <body>
@@ -1430,6 +1447,27 @@
           ${HERO_SLIDES.map((_, i) => `<button class="fl-hero-dot ${i === heroIndex ? "active" : ""}" data-slide="${i}"></button>`).join("")}
         </div>
       </div>
+
+      <section class="fl-growth" aria-labelledby="fl-growth-title">
+        <div class="fl-growth-copy">
+          <div class="fl-growth-kicker">For schools · colleges · events · businesses</div>
+          <h2 id="fl-growth-title">Need custom merchandise in bulk?</h2>
+          <p>Get custom-printed T-shirts, caps, mugs, keychains, badges and promotional products for your next event or business. Share the requirement and we'll discuss a practical quote.</p>
+          <div class="fl-growth-points"><span>Bulk & small batches</span><span>Custom artwork</span><span>Local Puri production</span><span>WhatsApp quotations</span></div>
+          <p><strong>Not sure what you need?</strong> Send the basics. We'll help work out the product, quantity and timeline.</p>
+        </div>
+        <form class="fl-growth-form" id="fl-bulk-quote-form">
+          <div class="fl-growth-field"><label for="fl-bulk-name">Your name *</label><input id="fl-bulk-name" name="name" required maxlength="70" placeholder="Name"></div>
+          <div class="fl-growth-field"><label for="fl-bulk-org">School / business / event</label><input id="fl-bulk-org" name="org" maxlength="90" placeholder="Organisation name"></div>
+          <div class="fl-growth-field"><label for="fl-bulk-type">What do you need? *</label><select id="fl-bulk-type" name="type" required><option value="">Choose a product</option><option>Custom T-shirts</option><option>Caps</option><option>Mugs</option><option>Keychains / badges</option><option>Event merchandise</option><option>Printing / signage</option><option>Multiple products</option><option>Not sure yet</option></select></div>
+          <div class="fl-growth-field"><label for="fl-bulk-qty">Approx. quantity *</label><input id="fl-bulk-qty" name="qty" required maxlength="40" placeholder="e.g. 100 pieces"></div>
+          <div class="fl-growth-field"><label for="fl-bulk-date">Needed by</label><input id="fl-bulk-date" name="date" type="date"></div>
+          <div class="fl-growth-field"><label for="fl-bulk-phone">Your contact number</label><input id="fl-bulk-phone" name="phone" inputmode="tel" maxlength="20" placeholder="Optional"></div>
+          <div class="fl-growth-field full"><label for="fl-bulk-details">Design, sizes, colours or other details</label><textarea id="fl-bulk-details" name="details" maxlength="600" placeholder="Tell us a little about the order..."></textarea></div>
+          <button class="fl-growth-submit" type="submit">Request a bulk quotation on WhatsApp →</button>
+          <p class="fl-growth-note">This opens WhatsApp with your enquiry pre-filled. Nothing is submitted or stored on this website.</p>
+        </form>
+      </section>
       <div class="fl-sections">${sectionTabs}</div>
       <div class="fl-shop-tools fl-results-toolbar">
         <span class="fl-results-count">${visible.length} ${visible.length === 1 ? "product" : "products"}</span>
@@ -1748,6 +1786,22 @@ Color options: White, Black, Red">${defaults ? escapeHtml(defaults.specs || "") 
   }
 
   function attachEvents() {
+    const bulkForm = document.getElementById("fl-bulk-quote-form");
+    if (bulkForm) bulkForm.onsubmit = (event) => {
+      event.preventDefault();
+      const fields = [
+        ["Name", "fl-bulk-name"], ["Organisation", "fl-bulk-org"],
+        ["Requirement", "fl-bulk-type"], ["Approx. quantity", "fl-bulk-qty"],
+        ["Needed by", "fl-bulk-date"], ["Contact number", "fl-bulk-phone"],
+        ["Details", "fl-bulk-details"]
+      ];
+      const lines = fields.map(([label,id]) => {
+        const el = document.getElementById(id);
+        return el && el.value.trim() ? label + ": " + el.value.trim() : "";
+      }).filter(Boolean);
+      const message = "Hi Flayora! I'd like a bulk quotation.\\n\\n" + lines.join("\\n");
+      window.open("https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(message), "_blank", "noopener");
+    };
     const heroEl = document.getElementById("fl-hero");
     if (heroEl) {
       const prev = document.getElementById("fl-hero-prev");
