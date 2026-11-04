@@ -815,6 +815,71 @@
     #flayora-root .fl-filter-drawer {width:min(88vw,430px)!important;max-width:88vw!important}
   }
 
+
+  /* Category carousel v2 — larger 3D sticker tiles with native swipe/scroll snapping */
+  #flayora-root .fl-category-tabs {
+    display:flex;align-items:flex-start;gap:22px!important;
+    overflow-x:auto;overflow-y:visible;scroll-snap-type:x mandatory;
+    scroll-padding-inline:22px;overscroll-behavior-x:contain;
+    perspective:1100px;transform-style:preserve-3d;
+    padding:28px 24px 30px!important;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  }
+  #flayora-root .fl-category-tabs::-webkit-scrollbar {display:none}
+  #flayora-root .fl-category-tabs .fl-tab {
+    flex:0 0 96px!important;min-width:96px!important;gap:10px!important;
+    scroll-snap-align:center;transform-style:preserve-3d;
+    transition:transform .3s cubic-bezier(.2,.8,.2,1);
+  }
+  #flayora-root .fl-category-tabs .fl-tab-badge {
+    width:84px!important;height:84px!important;border-radius:27px!important;
+    border:2px solid rgba(255,255,255,.95)!important;
+    box-shadow:0 13px 22px rgba(51,65,110,.13),inset 0 2px 2px rgba(255,255,255,.95),inset 0 -5px 10px rgba(93,105,150,.07)!important;
+    transform:rotateX(7deg) rotateY(-8deg) translateZ(8px);
+    transform-style:preserve-3d;
+    transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,filter .35s!important;
+  }
+  #flayora-root .fl-category-tabs .fl-tab-badge::before {
+    width:53px;height:53px;right:-14px;top:-17px;
+    box-shadow:inset 0 2px 5px rgba(255,255,255,.5)
+  }
+  #flayora-root .fl-category-tabs .fl-tab-badge::after {
+    width:40px;height:40px;left:-15px;bottom:-17px;
+    box-shadow:inset 0 2px 5px rgba(255,255,255,.45)
+  }
+  #flayora-root .fl-category-tabs .fl-tab-badge svg {
+    width:49px!important;height:49px!important;stroke-width:1.65!important;
+    filter:drop-shadow(0 5px 3px rgba(61,75,112,.22));
+    transform:translateZ(15px);
+  }
+  #flayora-root .fl-category-tabs .fl-tab:hover {transform:translateY(-4px)}
+  #flayora-root .fl-category-tabs .fl-tab:hover .fl-tab-badge {
+    transform:rotateX(0) rotateY(0) rotateZ(-4deg) translateZ(18px) scale(1.06);
+    box-shadow:0 22px 30px rgba(51,65,110,.2),inset 0 2px 2px rgba(255,255,255,.95)!important;
+    filter:saturate(1.12)
+  }
+  #flayora-root .fl-category-tabs .fl-tab.active .fl-tab-badge {
+    transform:rotateX(0) rotateY(0) translateZ(15px) scale(1.04);
+    box-shadow:0 0 0 4px rgba(128,117,237,.16),0 17px 28px rgba(65,75,130,.2),inset 0 2px 2px rgba(255,255,255,.95)!important;
+  }
+  #flayora-root .fl-category-tabs .fl-tab-label {font-size:12px!important;letter-spacing:-.1px}
+  @media(max-width:700px) {
+    #flayora-root .fl-category-tabs {
+      gap:16px!important;padding:22px 16px 26px!important;
+      scroll-padding-inline:16px;
+    }
+    #flayora-root .fl-category-tabs .fl-tab {flex-basis:82px!important;min-width:82px!important}
+    #flayora-root .fl-category-tabs .fl-tab-badge {
+      width:72px!important;height:72px!important;border-radius:24px!important;
+    }
+    #flayora-root .fl-category-tabs .fl-tab-badge svg {width:43px!important;height:43px!important}
+    #flayora-root .fl-category-tabs .fl-tab-label {font-size:11px!important}
+  }
+  @media(prefers-reduced-motion:reduce) {
+    #flayora-root .fl-category-tabs .fl-tab,
+    #flayora-root .fl-category-tabs .fl-tab-badge {transition:none!important}
+  }
+
 </style>
 </head>
 <body>
