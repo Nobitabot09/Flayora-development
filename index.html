@@ -727,6 +727,75 @@
     #flayora-root .fl-filter-drawer {animation:none!important;transform:translateX(0)!important}
   }
 
+
+  /* Header actions: filter beside the brand, Team Desk anchored at top-right */
+  #flayora-root .fl-header {align-items:center}
+  #flayora-root .fl-header-actions {display:flex;align-items:center;gap:10px;margin-left:auto}
+  #flayora-root .fl-header-filter {border-radius:999px;background:#fff;padding:10px 16px}
+  #flayora-root .fl-results-toolbar {justify-content:flex-end;padding-top:14px}
+  /* Reliable right-side filter panel: no conflicting transform overrides */
+  #flayora-root .fl-filter-drawer {
+    top:0;right:0;bottom:0;left:auto;width:min(50vw,560px);height:100dvh;max-height:100dvh;
+    border-radius:22px 0 0 22px;transform:translateX(105%);
+    animation:fl-filter-side-enter .32s cubic-bezier(.2,.85,.2,1) forwards;
+    background:linear-gradient(160deg,#fff 0%,#f7f8ff 100%);
+    box-shadow:-28px 0 90px rgba(8,14,35,.28);
+  }
+  @keyframes fl-filter-side-enter {to {transform:translateX(0)}}
+  #flayora-root .fl-filter-head {padding:24px 26px 18px}
+  #flayora-root .fl-filter-body {padding:10px 26px 26px}
+  #flayora-root .fl-filter-foot {padding:16px 26px max(16px,env(safe-area-inset-bottom))}
+  /* Category carousel icons: pastel illustrated sticker tiles inspired by the supplied reference */
+  #flayora-root .fl-category-tabs {gap:18px;padding-top:22px;padding-bottom:20px}
+  #flayora-root .fl-category-tabs .fl-tab {min-width:76px;gap:8px}
+  #flayora-root .fl-category-tabs .fl-tab-badge {
+    position:relative;overflow:hidden;width:66px;height:66px;border:2px solid #fff;
+    border-radius:22px;background:linear-gradient(145deg,#eaf5ff,#f0eaff 52%,#fff0e9);
+    box-shadow:0 7px 18px rgba(55,70,110,.11),inset 0 1px 0 rgba(255,255,255,.9);
+    color:#64738d;transition:transform .24s ease,box-shadow .24s ease;
+  }
+  #flayora-root .fl-category-tabs .fl-tab-badge::before {
+    content:"";position:absolute;width:42px;height:42px;right:-13px;top:-14px;border-radius:50%;
+    background:rgba(255,179,167,.35)
+  }
+  #flayora-root .fl-category-tabs .fl-tab-badge::after {
+    content:"";position:absolute;width:30px;height:30px;left:-12px;bottom:-13px;border-radius:50%;
+    background:rgba(123,199,237,.38)
+  }
+  #flayora-root .fl-category-tabs .fl-tab-badge svg {
+    position:relative;z-index:1;width:36px;height:36px;stroke:#62728d;stroke-width:1.8;
+    filter:drop-shadow(0 3px 2px rgba(75,91,124,.17));
+  }
+  #flayora-root .fl-category-tabs .fl-tab:nth-child(4n+1) .fl-tab-badge {background:linear-gradient(135deg,#d9f1ff,#e4e1ff 58%,#ffe2dc)}
+  #flayora-root .fl-category-tabs .fl-tab:nth-child(4n+2) .fl-tab-badge {background:linear-gradient(135deg,#ffe8df,#f8dced 55%,#e7e4ff)}
+  #flayora-root .fl-category-tabs .fl-tab:nth-child(4n+3) .fl-tab-badge {background:linear-gradient(135deg,#ddf7ed,#d9efff 60%,#fff0d8)}
+  #flayora-root .fl-category-tabs .fl-tab:nth-child(4n) .fl-tab-badge {background:linear-gradient(135deg,#fff0cf,#ffe1df 55%,#e7e4ff)}
+  #flayora-root .fl-category-tabs .fl-tab:hover .fl-tab-badge {transform:translateY(-5px) rotate(-4deg) scale(1.04);box-shadow:0 13px 24px rgba(55,70,110,.17)}
+  #flayora-root .fl-category-tabs .fl-tab.active .fl-tab-badge {
+    border-color:#fff;background:linear-gradient(135deg,#c9edff,#d9d1ff 58%,#ffd9d2);
+    box-shadow:0 0 0 3px rgba(128,117,237,.18),0 10px 22px rgba(65,75,130,.16);
+  }
+  #flayora-root .fl-category-tabs .fl-tab.active .fl-tab-badge svg {stroke:#485a7a}
+  #flayora-root .fl-category-tabs .fl-tab-label {font-size:11px;font-weight:800;color:#778198}
+  #flayora-root .fl-category-tabs .fl-tab.active .fl-tab-label {color:#242d4b}
+  @media(max-width:700px) {
+    #flayora-root .fl-header {gap:10px}
+    #flayora-root .fl-header-actions {gap:7px}
+    #flayora-root .fl-header-filter {padding:9px 11px;font-size:12px}
+    #flayora-root .fl-team-link {padding:9px 11px;font-size:12px}
+    #flayora-root .fl-filter-drawer {width:min(88vw,430px);max-width:88vw;border-radius:20px 0 0 20px}
+    #flayora-root .fl-filter-head {padding:20px 20px 16px}
+    #flayora-root .fl-filter-body {padding:8px 20px 22px}
+    #flayora-root .fl-filter-foot {padding:14px 20px max(14px,env(safe-area-inset-bottom))}
+    #flayora-root .fl-category-tabs {gap:13px;padding-left:14px;padding-right:14px}
+    #flayora-root .fl-category-tabs .fl-tab {min-width:66px}
+    #flayora-root .fl-category-tabs .fl-tab-badge {width:58px;height:58px;border-radius:19px}
+    #flayora-root .fl-category-tabs .fl-tab-badge svg {width:32px;height:32px}
+  }
+  @media(prefers-reduced-motion:reduce) {
+    #flayora-root .fl-filter-drawer {animation:none;transform:translateX(0)}
+  }
+
 </style>
 </head>
 <body>
@@ -1232,7 +1301,13 @@
             <p>Digital Print Hub — custom prints &amp; gifting</p>
           </div>
         </div>
-        <button class="fl-team-link" id="fl-open-team">Team desk</button>
+        <div class="fl-header-actions">
+          <button class="fl-filter-trigger fl-header-filter" id="fl-open-filters" aria-label="Open product filters">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M7 12h10m-7 5h4"/><circle cx="8" cy="7" r="2" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="2" fill="currentColor" stroke="none"/></svg>
+            Filter ${filterCount() ? `<span class="fl-filter-count">${filterCount()}</span>` : ""}
+          </button>
+          <button class="fl-team-link" id="fl-open-team">Team desk</button>
+        </div>
       </div>
       <div class="fl-hero" id="fl-hero">
         <div class="fl-hero-track" id="fl-hero-track" style="transform:translateX(-${heroIndex * 100}%)">
@@ -1260,11 +1335,7 @@
         </div>
       </div>
       <div class="fl-sections">${sectionTabs}</div>
-      <div class="fl-shop-tools">
-        <button class="fl-filter-trigger" id="fl-open-filters" aria-label="Open product filters">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M7 12h10m-7 5h4"/><circle cx="8" cy="7" r="2" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="2" fill="currentColor" stroke="none"/></svg>
-          Filter &amp; sort ${filterCount() ? `<span class="fl-filter-count">${filterCount()}</span>` : ""}
-        </button>
+      <div class="fl-shop-tools fl-results-toolbar">
         <span class="fl-results-count">${visible.length} ${visible.length === 1 ? "product" : "products"}</span>
       </div>
       <div class="fl-tabs fl-category-tabs">${tabs}</div>
