@@ -68,6 +68,7 @@ export async function onRequestPost({ request, env }) {
   }
 
   const model = env.FLAYORA_AI_MODEL || MODEL_DEFAULT;
+  if (!/^@[a-z0-9-]+\/[a-z0-9._-]+$/i.test(model)) return json({ error: "The configured AI model ID is invalid." }, 500);
   const messages = [
     { role: "system", content: `${system}\n\nApproved Flayora knowledge:\n${context || "No approved knowledge is available. Say you do not have verified information."}\n\nWhen useful, cite source IDs in square brackets.` },
     ...history,
@@ -75,7 +76,7 @@ export async function onRequestPost({ request, env }) {
   ];
 
   try {
-    const upstream = await fetch(`https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId)}/ai/run/${encodeURIComponent(model)}`, {
+    const upstream = await fetch(`https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId)}/ai/run/${model}`, {
       method: "POST",
       headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify({ messages, max_tokens: 450, temperature: 0.2 })
@@ -99,6 +100,6 @@ export async function onRequestPost({ request, env }) {
   }
 }
 
-export async function onRequestGet() {
-  return json({ service: "Flayora AI", status: "preview", configured: false, note: "POST a message after configuring server-side AI credentials." });
+export async function onRequestGet({ env }) {
+  return json({ service: "Flayora AI", status: "preview", configured: Boolean(env.CF_ACCOUNT_ID && env.CF_AI_TOKEN), note: "Development preview endpoint. No production data is connected." });
 }
