@@ -2580,5 +2580,134 @@ Color options: White, Black, Red">${defaults ? escapeHtml(defaults.specs || "") 
 })();
 </script>
   <script src="/ai/ai-widget.js" defer></script>
+
+<style id="fl-cart-styles">
+#fl-cart-trigger{position:relative;border:0;border-radius:24px;padding:10px 15px;background:#D64545;color:#fff;font:600 13px Inter,sans-serif;cursor:pointer;box-shadow:0 5px 14px #d6454530}
+#fl-cart-count{display:inline-grid;place-items:center;min-width:19px;height:19px;margin-left:5px;border-radius:50%;background:#fff;color:#D64545;font-size:11px}
+.fl-order-tools{margin:18px 0;padding:16px;background:#faf8f2;border:1px solid #e5dece;border-radius:10px}
+.fl-order-tools label{display:block;margin:10px 0 5px;font-size:12px;font-weight:700;color:#33322e}
+.fl-order-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fl-order-tools select,.fl-order-tools input{width:100%;min-width:0;padding:11px;border:1px solid #d8d2c4;border-radius:7px;background:#fff;color:#1d2438;font:14px Inter,sans-serif}
+.fl-live-total{display:flex;justify-content:space-between;align-items:center;margin:14px 0 10px;font-size:13px;color:#6b6a63}
+.fl-live-total strong{font-size:21px;color:#1d2438}
+.fl-order-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.fl-order-actions button{border:0;border-radius:7px;padding:12px 9px;font:600 13px Inter,sans-serif;cursor:pointer}
+.fl-add-cart{background:#1d2438;color:#fff}
+.fl-order-wa{background:#1f9d62;color:#fff}
+.fl-cart-overlay{position:fixed;inset:0;z-index:10050;background:#10152299;display:flex;justify-content:flex-end}
+.fl-cart-panel{width:min(460px,100%);height:100%;overflow:auto;background:#fff;padding:22px;box-shadow:-12px 0 40px #0002}
+.fl-cart-head{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #eee;padding-bottom:14px}
+.fl-cart-head h2{font:700 24px Fraunces,serif;color:#1d2438;margin:0}
+.fl-cart-close{border:0;background:#f2eee6;border-radius:50%;width:34px;height:34px;font-size:18px}
+.fl-cart-item{padding:15px 0;border-bottom:1px solid #eee}
+.fl-cart-item-top{display:flex;justify-content:space-between;gap:12px}
+.fl-cart-item strong{color:#1d2438;font-size:14px}
+.fl-cart-item small{display:block;color:#777;font-size:12px;margin-top:4px}
+.fl-cart-item input{width:70px;padding:7px;border:1px solid #ddd;border-radius:6px}
+.fl-cart-remove{border:0;background:none;color:#c33;font-size:12px}
+.fl-cart-total{display:flex;justify-content:space-between;padding:18px 0;font-weight:700;color:#1d2438}
+.fl-cart-confirm{width:100%;padding:14px;border:0;border-radius:8px;background:#1f9d62;color:white;font-weight:700;font-size:15px}
+.fl-cart-note{font-size:11px;line-height:1.5;color:#777;margin-top:12px}
+.fl-cart-empty{padding:42px 8px;text-align:center;color:#777}
+@media(max-width:560px){.fl-order-row{grid-template-columns:1fr 1fr}.fl-detail-info{padding:22px 18px}.fl-order-actions{grid-template-columns:1fr}.fl-cart-panel{padding:18px}}
+</style>
+<script id="fl-cart-system">
+(function(){
+  const PHONE="917735565477", KEY="flayora-order-cart-v1";
+  let cart=[];
+  try{cart=JSON.parse(localStorage.getItem(KEY)||"[]");if(!Array.isArray(cart))cart=[];}catch(e){cart=[];}
+  const money=n=>"₹"+Number(n||0).toLocaleString("en-IN",{maximumFractionDigits:2});
+  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(cart));}catch(e){} updateBadge();};
+  const unitMap={piece:1,pair:2,dozen:12};
+  function updateBadge(){
+    const b=document.getElementById("fl-cart-count");
+    if(b)b.textContent=cart.reduce((n,x)=>n+Number(x.quantity||0),0);
+  }
+  function addHeaderButton(){
+    const actions=document.querySelector(".fl-header-actions");
+    if(!actions||document.getElementById("fl-cart-trigger"))return;
+    const b=document.createElement("button");b.id="fl-cart-trigger";b.type="button";
+    b.innerHTML='🛒 Cart <span id="fl-cart-count">0</span>';
+    b.addEventListener("click",openCart);actions.prepend(b);updateBadge();
+  }
+  function enhanceDetail(){
+    const info=document.querySelector("#flayora-root .fl-detail-info");
+    if(!info||info.querySelector(".fl-order-tools"))return;
+    const enquire=info.querySelector("[data-enquire-code]");
+    if(!enquire)return;
+    const locked=enquire.classList.contains("disabled");
+    if(!locked){enquire.textContent="Order on WhatsApp";enquire.style.background="#1f9d62";enquire.style.fontWeight="700";}
+    const priceEl=info.querySelector(".fl-detail-price");
+    const raw=(priceEl?.textContent||"").replace(/[^\d.]/g,"");
+    const unitPrice=Number(raw)||0;
+    const code=(enquire.dataset.enquireCode||"").trim();
+    const name=(enquire.dataset.enquireName||info.querySelector("h2")?.textContent||"Product").trim();
+    const tools=document.createElement("section");tools.className="fl-order-tools";
+    tools.innerHTML=`
+      <div style="font-weight:700;color:#1d2438">Configure your order</div>
+      <div class="fl-order-row">
+        <div><label for="fl-order-unit">Unit</label><select id="fl-order-unit"><option value="piece">Piece</option><option value="pair">Pair (2 pieces)</option><option value="dozen">Dozen (12 pieces)</option></select></div>
+        <div><label for="fl-order-qty">Quantity</label><input id="fl-order-qty" type="number" min="1" max="9999" step="1" value="1"></div>
+      </div>
+      <div class="fl-live-total"><span>Estimated total</span><strong id="fl-order-total">${unitPrice?money(unitPrice):"Ask for price"}</strong></div>
+      <div class="fl-order-actions"><button class="fl-add-cart" type="button">＋ Add to Cart</button><button class="fl-order-wa" type="button">Order on WhatsApp</button></div>
+      <div style="font-size:11px;color:#777;margin-top:9px">Price estimate only. Final pricing and customisation will be confirmed on WhatsApp.</div>`;
+    enquire.insertAdjacentElement("afterend",tools);
+    const unit=tools.querySelector("#fl-order-unit"),qty=tools.querySelector("#fl-order-qty"),total=tools.querySelector("#fl-order-total");
+    const calculate=()=>{const q=Math.max(1,Math.min(9999,Math.floor(Number(qty.value)||1)));qty.value=q;const amount=unitPrice*q*unitMap[unit.value];total.textContent=unitPrice?money(amount):"Ask for price";return {q,amount,unit:unit.value};};
+    unit.addEventListener("change",calculate);qty.addEventListener("input",calculate);
+    function details(){const d=calculate();return {code,name,unit:d.unit,quantity:d.q,unitPrice,amount:d.amount};}
+    tools.querySelector(".fl-add-cart").addEventListener("click",()=>{
+      const item=details(),key=item.code+"|"+item.unit;
+      const old=cart.find(x=>x.key===key);
+      if(old)old.quantity+=item.quantity;
+      else cart.push({...item,key});
+      save();
+      const btn=tools.querySelector(".fl-add-cart");btn.textContent="✓ Added to Cart";setTimeout(()=>{if(btn.isConnected)btn.textContent="＋ Add to Cart";},1300);
+    });
+    tools.querySelector(".fl-order-wa").addEventListener("click",()=>{
+      const d=details(),line=`Hi Flayora! I'd like to order:\\n• ${d.name} (${d.code})\\n• Unit: ${d.unit}\\n• Quantity: ${d.quantity}\\n• Estimated total: ${d.unitPrice?money(d.amount):"Please quote"}\\n\\nPlease confirm availability and final price.`;
+      window.open("https://wa.me/"+PHONE+"?text="+encodeURIComponent(line),"_blank","noopener");
+    });
+  }
+  function openCart(){
+    document.getElementById("fl-cart-overlay")?.remove();
+    const overlay=document.createElement("div");overlay.id="fl-cart-overlay";overlay.className="fl-cart-overlay";
+    overlay.innerHTML=`<section class="fl-cart-panel" role="dialog" aria-modal="true" aria-label="Your cart">
+      <div class="fl-cart-head"><h2>Your Cart</h2><button class="fl-cart-close" aria-label="Close">×</button></div>
+      <div class="fl-cart-lines"></div><div class="fl-cart-summary"></div>
+    </section>`;
+    document.body.appendChild(overlay);
+    overlay.querySelector(".fl-cart-close").onclick=()=>overlay.remove();
+    overlay.addEventListener("click",e=>{if(e.target===overlay)overlay.remove();});
+    renderCart(overlay);
+  }
+  function renderCart(overlay){
+    const lines=overlay.querySelector(".fl-cart-lines"),summary=overlay.querySelector(".fl-cart-summary");
+    if(!cart.length){lines.innerHTML='<div class="fl-cart-empty">Your cart is empty.<br><small>Choose a product and add it here.</small></div>';summary.innerHTML="";return;}
+    lines.innerHTML=cart.map((x,i)=>`<article class="fl-cart-item">
+      <div class="fl-cart-item-top"><div><strong>${escapeText(x.name)}</strong><small>${escapeText(x.code)} · ${escapeText(x.unit)} · ${money(x.unitPrice)} per piece</small></div><button class="fl-cart-remove" data-remove="${i}">Remove</button></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px"><label style="font-size:12px;color:#777">Qty <input type="number" min="1" max="9999" value="${x.quantity}" data-qty="${i}"></label><strong>${x.unitPrice?money(x.unitPrice*x.quantity*unitMap[x.unit]):"Quote required"}</strong></div>
+    </article>`).join("");
+    const priced=cart.reduce((n,x)=>n+(x.unitPrice*x.quantity*unitMap[x.unit]),0);
+    const hasQuote=cart.some(x=>!x.unitPrice);
+    summary.innerHTML=`<div class="fl-cart-total"><span>Estimated total</span><span>${hasQuote?"From "+money(priced)+" + quote":money(priced)}</span></div>
+      <button class="fl-cart-confirm" type="button">Confirm Order on WhatsApp →</button>
+      <p class="fl-cart-note">No payment is taken on this site. WhatsApp will open with your selected items so Flayora can confirm the final quote, availability and delivery.</p>`;
+    lines.querySelectorAll("[data-remove]").forEach(b=>b.onclick=()=>{cart.splice(Number(b.dataset.remove),1);save();renderCart(overlay);});
+    lines.querySelectorAll("[data-qty]").forEach(inp=>inp.onchange=()=>{cart[Number(inp.dataset.qty)].quantity=Math.max(1,Math.min(9999,Math.floor(Number(inp.value)||1)));save();renderCart(overlay);});
+    summary.querySelector(".fl-cart-confirm").onclick=()=>{
+      const rows=cart.map(x=>`• ${x.name} (${x.code}) — ${x.quantity} × ${x.unit} — ${x.unitPrice?money(x.unitPrice*x.quantity*unitMap[x.unit]):"Please quote"}`).join("\\n");
+      const message=`Hi Flayora! I'd like to confirm this order:\\n\\n${rows}\\n\\nEstimated total: ${hasQuote?"Quote required":money(priced)}\\n\\nPlease confirm availability, final price and delivery details.`;
+      window.open("https://wa.me/"+PHONE+"?text="+encodeURIComponent(message),"_blank","noopener");
+    };
+  }
+  function escapeText(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+  const observer=new MutationObserver(()=>{addHeaderButton();enhanceDetail();});
+  observer.observe(document.getElementById("flayora-root")||document.body,{childList:true,subtree:true});
+  addHeaderButton();enhanceDetail();
+})();
+</script>
+
 </body>
 </html>
