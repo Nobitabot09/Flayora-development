@@ -1406,21 +1406,38 @@
       state.products = SAMPLE_PRODUCTS;
       state.cloudReadError = String(e && (e.message || e) || "Local storage is unavailable");
     }
+
+    // Render the storefront as soon as the catalogue is available. Do not make visitors
+    // wait for dozens of individual image reads or analytics writes before seeing the page.
     state.activeSection = state.products[0] ? state.products[0].section : "";
-    try {
-      const heroRes = await window.storage.get("flayora-hero-slides",true);
-      state.heroSlides = heroRes && heroRes.value ? JSON.parse(heroRes.value) : HERO_SLIDES.map(x => JSON.parse(JSON.stringify(x)));
-      await Promise.all(state.heroSlides.map(async (slide,i) => {
-        try { const img=await window.storage.get(`flayora-hero-image:${i}`,true); if(img && img.value) slide.imageUrl=img.value; } catch(e) {}
-      }));
-    } catch(e) { state.heroSlides = HERO_SLIDES.map(x => JSON.parse(JSON.stringify(x))); }
-    await loadImages();
-    await loadAnalytics();
-    state.analytics.visits += 1;
-    await saveAnalytics();
-    state.lastSyncedAt = new Date();
+    state.heroSlides = HERO_SLIDES.map(x => JSON.parse(JSON.stringify(x)));
     render();
     startStockSync();
+
+    // Load optional media and analytics after first paint, then refresh the view once media arrives.
+    Promise.all([
+      (async () => {
+        try {
+          const heroRes = await window.storage.get("flayora-hero-slides", true);
+          state.heroSlides = heroRes && heroRes.value ? JSON.parse(heroRes.value) : HERO_SLIDES.map(x => JSON.parse(JSON.stringify(x)));
+          await Promise.all(state.heroSlides.map(async (slide, i) => {
+            try { const img = await window.storage.get(`flayora-hero-image:${i}`, true); if (img && img.value) slide.imageUrl = img.value; } catch (e) {}
+          }));
+        } catch (e) { state.heroSlides = HERO_SLIDES.map(x => JSON.parse(JSON.stringify(x))); }
+      })(),
+      loadImages()
+    ]).then(() => {
+      state.lastSyncedAt = new Date();
+      render();
+    }).catch(e => console.warn("Optional storefront media could not be fully loaded:", e));
+
+    (async () => {
+      try {
+        await loadAnalytics();
+        state.analytics.visits += 1;
+        await saveAnalytics();
+      } catch (e) { console.warn("Analytics could not be updated:", e); }
+    })();
   }
 
   async function pollCatalog(force) {
