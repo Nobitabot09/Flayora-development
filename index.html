@@ -1460,8 +1460,7 @@
     (async () => {
       try {
         await loadAnalytics();
-        state.analytics.visits += 1;
-        await saveAnalytics();
+        await logAnalyticsEvent("page_view");
       } catch (e) { console.warn("Analytics could not be updated:", e); }
     })();
   }
@@ -1517,28 +1516,45 @@
 
   async function loadAnalytics() {
     try {
-      const res = await window.storage.get(ANALYTICS_KEY, true);
-      state.analytics = res && res.value ? JSON.parse(res.value) : { visits: 0, enquiries: [] };
-    } catch (e) { state.analytics = { visits: 0, enquiries: [] }; }
+      const response = await fetch("/api/analytics", { headers: { Accept: "application/json" } });
+      if (!response.ok) throw new Error("Analytics endpoint returned " + response.status);
+      const data = await response.json();
+      state.analytics = { visits: Number(data.visits || 0), enquiries: Array.isArray(data.enquiries) ? data.enquiries.slice(0, 200) : [] };
+    } catch (e) {
+      console.warn("Analytics read failed:", e);
+      state.analytics = { visits: 0, enquiries: [] };
+    }
   }
 
-  async function saveAnalytics() {
-    // Anonymous visitors must not be allowed to write arbitrary records into the shared key/value table.
-    // Local preview analytics are stored in this browser only.
-    if (!state.teamUnlocked) return false;
+  async function logAnalyticsEvent(type, product) {
     try {
-      await window.storage.set(ANALYTICS_KEY, JSON.stringify(state.analytics), true);
+      const payload = { type };
+      if (product) {
+        payload.code = String(product.code || "").slice(0, 40);
+        payload.name = String(product.name || "").slice(0, 100);
+      }
+      const response = await fetch("/api/analytics", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(payload),
+        keepalive: true
+      });
+      if (!response.ok) throw new Error("Analytics event rejected (" + response.status + ")");
       return true;
     } catch (e) {
-      console.error("Analytics save failed", e);
+      console.warn("Analytics event could not be recorded:", e);
       return false;
     }
   }
 
+  async function saveAnalytics() {
+    // Analytics are written by the server endpoint, never by anonymous browser clients to the catalogue store.
+    return false;
+  }
+
   async function logEnquiry(code, name) {
-    state.analytics.enquiries.unshift({ code, name, time: new Date().toLocaleString() });
-    state.analytics.enquiries = state.analytics.enquiries.slice(0, 200);
-    await saveAnalytics();
+    await logAnalyticsEvent("enquiry", { code, name });
+    await loadAnalytics();
   }
 
   function accentFor(category) {
