@@ -1367,12 +1367,7 @@
           state.imageCache[code][idx] = imageValue;
         } catch (e) {}
       }));
-      // If a second image exists, it is the original uploaded product photo.
-      // Keep that as the storefront lead image instead of the decorative placeholder.
-      Object.keys(state.imageCache).forEach(code => {
-        const gallery = state.imageCache[code] || [];
-        if (gallery[1]) state.imageCache[code] = [gallery[1], ...gallery.slice(2)].filter(Boolean);
-      });
+      // Preserve uploaded photo slot order: slot 0 is the main image, followed by slots 1 and 2.
     } catch (e) { /* no images yet */ }
   }
 
