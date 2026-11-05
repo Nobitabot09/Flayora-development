@@ -1374,7 +1374,7 @@
   // Uploaded product photos are JPG/PNG. Older slot-0 records may contain a generated SVG placeholder; never promote those over real photos.
   function getProductPhotos(code) {
     return (state.imageCache[code] || []).filter(src =>
-      typeof src === "string" && src.trim() && !/^data:image\\/svg\\+xml(?:[;,])/i.test(src.trim())
+      typeof src === "string" && src.trim() && !src.trim().toLowerCase().startsWith("data:image/svg+xml")
     );
   }
 
