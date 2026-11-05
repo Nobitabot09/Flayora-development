@@ -1371,6 +1371,13 @@
     } catch (e) { /* no images yet */ }
   }
 
+  // Uploaded product photos are JPG/PNG. Older slot-0 records may contain a generated SVG placeholder; never promote those over real photos.
+  function getProductPhotos(code) {
+    return (state.imageCache[code] || []).filter(src =>
+      typeof src === "string" && src.trim() && !/^data:image\\/svg\\+xml(?:[;,])/i.test(src.trim())
+    );
+  }
+
   async function saveImage(code, index, dataUrl) {
     try {
       const saved = await window.storage.set(`flayora-image:${code}:${index}`, dataUrl, true);
@@ -1611,7 +1618,7 @@
       const locked = p.stockType === "single" && p.status !== "available";
       const ribbon = locked ? `<div class="fl-ribbon" style="background:${p.status === "sold" ? "var(--ink)" : "var(--mustard)"}">${p.status === "sold" ? "Sold" : "Booked"}</div>` : "";
       const priceHtml = p.price ? `<div class="fl-price">₹${p.price}</div>` : `<div class="fl-price tbd">Ask for price</div>`;
-      const galleryPhotos = (state.imageCache[p.code] || []).filter(Boolean);
+      const galleryPhotos = getProductPhotos(p.code);
       const photo = galleryPhotos[0] || p.image;
       const newTag = isNewArrival(p) ? `<span class="fl-new-tag">New arrival</span>` : "";
       return `
@@ -1756,7 +1763,7 @@
   function renderProductDetail() {
     const p = state.products.find(p => p.code === state.viewingProduct);
     if (!p) return "";
-    const gallery = (state.imageCache[p.code] || []).filter(Boolean);
+    const gallery = getProductPhotos(p.code);
     const images = gallery.length ? gallery : (p.image ? [p.image] : []);
     const idx = images.length ? Math.min(state.detailImageIndex, images.length - 1) : 0;
     const locked = p.stockType === "single" && p.status !== "available";
