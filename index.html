@@ -2331,29 +2331,47 @@ Color options: White, Black, Red">${defaults ? escapeHtml(defaults.specs || "") 
     };
     const detailClose = document.getElementById("fl-detail-close");
     if (detailClose) detailClose.onclick = () => { state.viewingProduct = null; render(); };
+    const updateDetailGallery = () => {
+      const p = state.products.find(p => p.code === state.viewingProduct);
+      if (!p) return;
+      const images = getProductPhotos(p.code);
+      const gallery = images.length ? images : (p.image ? [p.image] : []);
+      if (!gallery.length) return;
+      const idx = Math.max(0, Math.min(state.detailImageIndex, gallery.length - 1));
+      const image = document.querySelector("#fl-detail-bg .fl-detail-image-wrap img");
+      if (image) {
+        image.src = gallery[idx];
+        image.alt = p.name;
+      }
+      document.querySelectorAll("#fl-detail-bg .fl-detail-thumb").forEach((thumb, i) => {
+        thumb.classList.toggle("active", i === idx);
+        if (i === idx) thumb.setAttribute("aria-current", "true");
+        else thumb.removeAttribute("aria-current");
+      });
+    };
     const detailPrev = document.getElementById("fl-detail-prev");
     if (detailPrev) detailPrev.onclick = (e) => {
       e.stopPropagation();
       const p = state.products.find(p => p.code === state.viewingProduct);
-      const images = (p && (state.imageCache[p.code] || []).filter(Boolean)) || [];
+      const images = p ? getProductPhotos(p.code) : [];
       const n = images.length || 1;
       state.detailImageIndex = (state.detailImageIndex - 1 + n) % n;
-      render();
+      updateDetailGallery();
     };
     const detailNext = document.getElementById("fl-detail-next");
     if (detailNext) detailNext.onclick = (e) => {
       e.stopPropagation();
       const p = state.products.find(p => p.code === state.viewingProduct);
-      const images = (p && (state.imageCache[p.code] || []).filter(Boolean)) || [];
+      const images = p ? getProductPhotos(p.code) : [];
       const n = images.length || 1;
       state.detailImageIndex = (state.detailImageIndex + 1) % n;
-      render();
+      updateDetailGallery();
     };
-    document.querySelectorAll(".fl-detail-thumb").forEach(btn => {
+    document.querySelectorAll("#fl-detail-bg .fl-detail-thumb").forEach(btn => {
       btn.onclick = (e) => {
         e.stopPropagation();
         state.detailImageIndex = parseInt(btn.dataset.thumb, 10);
-        render();
+        updateDetailGallery();
       };
     });
 
