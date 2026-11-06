@@ -1435,6 +1435,10 @@
 
     // Render the storefront as soon as the catalogue is available. Do not make visitors
     // wait for dozens of individual image reads or analytics writes before seeing the page.
+    // Open a product directly when the AI links to ?product=FL-xxx.
+    const requestedProduct = new URLSearchParams(window.location.search).get("product");
+    state.viewingProduct = requestedProduct && state.products.some(p => p.code === requestedProduct) ? requestedProduct : null;
+    state.detailImageIndex = 0;
     state.activeSection = state.products[0] ? state.products[0].section : "";
     state.heroSlides = HERO_SLIDES.map(x => JSON.parse(JSON.stringify(x)));
     render();
