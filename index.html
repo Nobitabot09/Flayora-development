@@ -1119,6 +1119,16 @@
       state.cloudReadError = String(e && (e.message || e) || "Local storage is unavailable");
     }
     state.activeSection = state.products[0] ? state.products[0].section : "";
+    // Allow Flayora AI product cards to open a specific storefront product.
+    const requestedProduct = new URLSearchParams(window.location.search).get("product");
+    if (requestedProduct) {
+      const matchedProduct = state.products.find(p => p.code === requestedProduct);
+      if (matchedProduct) {
+        state.viewingProduct = matchedProduct.code;
+        state.detailImageIndex = 0;
+        state.activeSection = matchedProduct.section || state.activeSection;
+      }
+    }
     await loadImages();
     await loadAnalytics();
     state.analytics.visits += 1;
