@@ -1183,6 +1183,57 @@
     #flayora-root .fl-filter-reset {background:#151c29;color:#eef1fa;border-color:#465168}
   }
 
+  /* Dark-mode filter drawer: keep every layer and label readable. */
+  @media (prefers-color-scheme: dark) {
+    #flayora-root .fl-filter-drawer {
+      background: #171e2c !important;
+      color: #f1f5ff !important;
+      border-color: #3a4559 !important;
+    }
+    #flayora-root .fl-filter-head,
+    #flayora-root .fl-filter-foot {
+      background: #202838 !important;
+      border-color: #3a4559 !important;
+    }
+    #flayora-root .fl-filter-head h3,
+    #flayora-root .fl-filter-group label.fl-filter-label {
+      color: #f1f5ff !important;
+    }
+    #flayora-root .fl-filter-group {
+      border-color: #3a4559 !important;
+    }
+    #flayora-root .fl-filter-check,
+    #flayora-root .fl-filter-check span {
+      color: #d8deeb !important;
+      opacity: 1 !important;
+    }
+    #flayora-root .fl-filter-control,
+    #flayora-root .fl-filter-control option {
+      background: #111927 !important;
+      color: #f1f5ff !important;
+      border-color: #465168 !important;
+      color-scheme: dark;
+    }
+    #flayora-root .fl-filter-control::placeholder {
+      color: #9ba8bd !important;
+      opacity: 1 !important;
+    }
+    #flayora-root .fl-filter-close,
+    #flayora-root .fl-filter-reset {
+      background: #151c29 !important;
+      color: #f1f5ff !important;
+      border-color: #465168 !important;
+    }
+    #flayora-root .fl-filter-apply {
+      background: linear-gradient(110deg,#343d60,#514779) !important;
+      color: #fff !important;
+      border-color: #8791b3 !important;
+    }
+    #flayora-root .fl-filter-check input {
+      accent-color: #a99ae8;
+    }
+  }
+
 </style>
   <link rel="stylesheet" href="/ai/ai-widget.css">
 </head>
