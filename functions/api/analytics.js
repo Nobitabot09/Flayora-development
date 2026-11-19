@@ -38,23 +38,5 @@ export async function onRequest({ request, env }) {
     return json({ ok: true }, 201);
   }
 
-  if (request.method === "GET") {
-    const listed = await env.FLAYORA_BUCKET.list({ prefix: PREFIX, limit: 1000 });
-    const records = await Promise.all(listed.objects.map(async item => {
-      try {
-        const object = await env.FLAYORA_BUCKET.get(item.key);
-        return object ? await object.json() : null;
-      } catch { return null; }
-    }));
-    const events = records.filter(Boolean);
-    return json({
-      visits: events.filter(event => event.type === "page_view").length,
-      enquiries: events.filter(event => event.type === "enquiry")
-        .sort((a, b) => String(b.at).localeCompare(String(a.at)))
-        .slice(0, 200)
-        .map(event => ({ code: event.code, name: event.name, time: event.at }))
-    });
-  }
-
-  return json({ error: "Method not allowed" }, 405);
+  return json({error:"Method not allowed"},405);
 }
