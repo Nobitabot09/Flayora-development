@@ -4,6 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#F7F3EC">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="/icons/flayora.svg">
   <title>Flayora — Digital Print Hub</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap');
@@ -2167,5 +2172,10 @@ Color options: White, Black, Red">${defaults ? escapeHtml(defaults.specs || "") 
 </script>
 <link rel="stylesheet" href="/ai/ai-widget.css">
 <script src="/ai/ai-widget.js" defer></script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(error => console.warn("PWA registration unavailable", error)));
+}
+</script>
 </body>
 </html>

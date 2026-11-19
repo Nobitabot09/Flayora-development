@@ -1,0 +1,19 @@
+{
+  "id": "/",
+  "name": "Flayora — Digital Print Hub",
+  "short_name": "Flayora",
+  "description": "Flayora custom printing, personalised gifts and catalogue.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F7F3EC",
+  "theme_color": "#F7F3EC",
+  "icons": [
+    {
+      "src": "/icons/flayora.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
