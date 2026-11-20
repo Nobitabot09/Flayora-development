@@ -1,4 +1,35 @@
 const PREFIX = "flayora-analytics-event:";
+const MAX_EVENT_BYTES = 2048;
+
+async function readBoundedBody(request, maxBytes) {
+  if (!request.body) return "";
+  const reader = request.body.getReader();
+  const chunks = [];
+  let size = 0;
+
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > maxBytes) {
+        await reader.cancel();
+        return null;
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+
+  const bytes = new Uint8Array(size);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return new TextDecoder().decode(bytes);
+}
 
 export async function onRequest({ request, env }) {
   const headers = {
@@ -14,11 +45,19 @@ export async function onRequest({ request, env }) {
     const requestOrigin = new URL(request.url).origin;
     if (origin && origin !== requestOrigin) return json({ error: "Origin not allowed" }, 403);
 
-    const length = Number(request.headers.get("Content-Length") || 0);
-    if (length > 2048) return json({ error: "Event is too large" }, 413);
+    const declaredLength = Number(request.headers.get("Content-Length") || 0);
+    if (declaredLength > MAX_EVENT_BYTES) return json({ error: "Event is too large" }, 413);
+
+    let body;
+    try {
+      body = await readBoundedBody(request, MAX_EVENT_BYTES);
+    } catch {
+      return json({ error: "Invalid request body" }, 400);
+    }
+    if (body === null) return json({ error: "Event is too large" }, 413);
 
     let event;
-    try { event = await request.json(); } catch { return json({ error: "Invalid JSON" }, 400); }
+    try { event = JSON.parse(body); } catch { return json({ error: "Invalid JSON" }, 400); }
     if (!event || !["page_view", "enquiry"].includes(event.type)) return json({ error: "Unsupported event type" }, 400);
 
     const record = {
